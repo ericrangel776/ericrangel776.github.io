@@ -1060,6 +1060,20 @@ footer .foot-mark{
 }
 .case-frame h2:first-child{ margin-top:0; padding-top:0; border-top:none; }
 .case-frame p{ color: var(--paper-dim); }
+.case-shot{
+  margin: 0 0 28px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-inset);
+}
+.case-shot img{
+  display:block; width:100%; height:auto;
+}
+.case-shot figcaption{
+  font-family: var(--font-mono); font-size:.72rem; letter-spacing:.04em;
+  color: var(--paper-faint);
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+}
 .case-frame ul{ margin: 10px 0 16px; }
 .case-frame li{
   position:relative; padding-left: 20px; margin-bottom: 8px;
