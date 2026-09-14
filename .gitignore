@@ -1,0 +1,9 @@
+Old Projects/
+
+server/node_modules/
+server/.env
+server/data/*.json
+
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){
+  try {
+    var stored = localStorage.getItem('theme');
+    if (!stored) {
+      var m = document.cookie.match(/(?:^|; )theme=(light|dark)/);
+      if (m) stored = m[1];
+    }
+    var theme = stored || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch(e) {}
+  try {
+    if (sessionStorage.getItem('bootSeen')) {
+      document.documentElement.setAttribute('data-boot', 'seen');
+    }
+  } catch(e) {}
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="assets/icons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="assets/icons/site.webmanifest">
+<meta name="theme-color" content="#121212">
+
+<title>ExpenseTracker | Eric Rangel</title>
+<meta name="description" content="Case study: a full-stack personal finance tracker built on ASP.NET Core 8 MVC with EF Core and SQL Server.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/site.css">
+
+<style></style>
+<noscript><style>.reveal-item{ opacity:1 !important; transform:none !important; } .reveal-bar{ width:120px !important; } .theme-toggle{ display:none !important; } .boot-screen, .konami-toast{ display:none !important; } .sysdiag-frame{ display:none !important; }</style></noscript>
+</head>
+<body data-page="project-expense">
+
+<div class="boot-screen" id="bootScreen" aria-hidden="true">
+  <div class="boot-lines" id="bootLines"></div>
+</div>
+
+<div class="theme-fx" id="themeFx" aria-hidden="true"></div>
+
+<div class="konami-toast" id="konamiToast" aria-hidden="true">
+  <span class="led" aria-hidden="true"></span>
+  <span>+ KONAMI CODE ACCEPTED +</span>
+</div>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="bg-fx" aria-hidden="true">
+  <div class="grid"></div>
+  <div class="brushed"></div>
+  <div class="wash"></div>
+</div>
+
+<header class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="index.html#top" aria-label="Eric Rangel, home">
+      <span class="brand-mark" aria-hidden="true">ER</span>
+      ERIC&nbsp;RANGEL
+    </a>
+    <div class="nav-right">
+      <button id="themeToggle" class="theme-toggle" type="button" data-state="light" aria-pressed="true" aria-label="Switch to dark theme">
+        <span class="tt-track" aria-hidden="true">
+          <span class="tt-knob">
+            <svg class="tt-icon tt-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="5" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                <line x1="12" y1="1" x2="12" y2="4"/>
+                <line x1="12" y1="20" x2="12" y2="23"/>
+                <line x1="1" y1="12" x2="4" y2="12"/>
+                <line x1="20" y1="12" x2="23" y2="12"/>
+                <line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/>
+                <line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/>
+                <line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/>
+                <line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/>
+              </g>
+            </svg>
+            <svg class="tt-icon tt-moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5z" fill="currentColor"/>
+            </svg>
+          </span>
+        </span>
+        <span class="tt-label">LIGHT</span>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList" aria-label="Toggle navigation menu">
+        <span></span>
+      </button>
+      <nav aria-label="Primary">
+        <ul class="nav-list" id="navList">
+          <li><a href="index.html#top" data-nav="top">Home</a></li>
+          <li><a href="index.html#about" data-nav="about">About</a></li>
+          <li><a href="index.html#projects" data-nav="projects">Work</a></li>
+          <li><a href="index.html#experience" data-nav="experience">Experience</a></li>
+          <li><a href="index.html#skills" data-nav="skills">Skills</a></li>
+          <li><a href="devlog.html" data-nav="devlog">Devlog</a></li>
+          <li><a href="resume.html" data-nav="resume">Résumé</a></li>
+          <li><a href="index.html#contact" data-nav="contact">Contact</a></li>
+        </ul>
+      </nav>
+      <span class="fav-star" aria-hidden="true">★</span>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+    </div>
+  </div>
+</header>
+
+<div id="siteRoot">
+<main id="main">
+
+  <section class="page-hero">
+    <div class="wrap">
+      <a class="back-link" href="index.html#projects">← Back to Work</a>
+      <div class="section-tag">PROJECT_02.WEB // Full-Stack App</div>
+      <h1>ExpenseTracker</h1>
+      <p class="lead">A personal finance tracker with a live dashboard, category management, and full CRUD, built to actually use day-to-day, not just to demo.</p>
+      <div class="case-meta">
+        <span class="badge">C#</span>
+        <span class="badge">ASP.NET Core MVC</span>
+        <span class="badge">EF Core</span>
+        <span class="badge">SQL Server</span>
+        <span class="badge">Bootstrap 5</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="frame case-frame reveal-item is-visible">
+        <div class="panel-bar v-amber"><span>CASE_STUDY.TXT</span><span class="led" aria-hidden="true"></span></div>
+        <div class="frame-body">
+
+          <h2>Overview</h2>
+          <p>ExpenseTracker is a code-first ASP.NET Core 8 MVC app for logging and visualizing personal spending: a dashboard with live charts, custom categories with icons and colors, and transaction management with proper server-side validation: the kind of app that needs to be trustworthy with real numbers, not just visually convincing.</p>
+
+          <div class="stat-row">
+            <div class="stat-box"><div class="num">2</div><div class="lbl">Chart Types (Doughnut / Spline)</div></div>
+            <div class="stat-box"><div class="num">100%</div><div class="lbl">Server-Side Validated</div></div>
+            <div class="stat-box"><div class="num">CRUD</div><div class="lbl">Full Transaction Lifecycle</div></div>
+          </div>
+
+          <h2>The Problem</h2>
+          <p>Most "finance tracker" tutorials stop at a table of rows. The goal here was closer to a real product: category-level breakdowns you can act on, protection against malformed or malicious input on every form, and a data model that could grow (recurring transactions, budgets) without a rewrite.</p>
+
+          <h2>Architecture &amp; Approach</h2>
+          <p>Standard MVC separation, with EF Core managing the schema as code rather than hand-written SQL migrations:</p>
+          <ul>
+            <li><strong>Model:</strong> EF Core code-first entities for Transactions and Categories, with a one-to-many relationship and cascade rules that keep orphaned transactions from appearing after a category is deleted.</li>
+            <li><strong>Controller:</strong> action methods validate via data annotations and <code>ModelState</code> before touching the database, and every state-changing POST is protected with anti-forgery tokens.</li>
+            <li><strong>View:</strong> Bootstrap 5 layout with Chart.js-driven doughnut (spend by category) and spline (spend over time) charts fed by a small JSON endpoint.</li>
+          </ul>
+          <div class="code-block">[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task&lt;IActionResult&gt; Create(Transaction model)
+{
+    if (!ModelState.IsValid)
+        return View(model);
+
+    _context.Transactions.Add(model);
+    await _context.SaveChangesAsync();
+    return RedirectToAction(nameof(Index));
+}</div>
+
+          <h2>Results</h2>
+          <p>Every mutating action (create, edit, delete, category management) runs through the same validation and CSRF-protection path, so there's exactly one place trust decisions get made instead of one per form. The dashboard recalculates from live data on every load rather than a cached snapshot, so it's never showing stale totals.</p>
+
+          <h2>What I'd Do Differently</h2>
+          <ul>
+            <li>Add a proper budgets feature with threshold alerts. The data model already supports it, it just wasn't in scope for v1.</li>
+            <li>Move chart data to a cached read-model once the transaction table grows. Right now every dashboard load recomputes aggregates directly, which is fine at this scale but wouldn't stay fine indefinitely.</li>
+          </ul>
+
+        </div>
+      </div>
+
+      <div class="case-nav">
+        <a class="btn btn-ghost" href="project-snake-agent.html">← Prev: RL Snake Agent</a>
+        <a class="btn btn-ghost" href="project-driving-school.html">Next: Driving School Manager →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-mark">// END TRANSMISSION</div>
+    <p>&copy; <span id="year"></span> Eric Rangel. Built with HTML, CSS &amp; vanilla JavaScript.</p>
+    <div class="foot-links">
+      <a href="index.html#top">Home</a><span class="sep">/</span>
+      <a href="devlog.html">Devlog</a><span class="sep">/</span>
+      <a href="resume.html">Résumé</a>
+    </div>
+    <div class="footer-badges">
+      <div class="hit-counter" title="A real, shared visit count, tracked server-side and not just in your browser.">
+        <span class="hc-label">Total Visits</span>
+        <span class="hc-digits" id="hitCounter">000000</span>
+      </div>
+      <div class="legacy-badge">OPTIMIZED FOR 1280×800 · ANY MODERN BROWSER</div>
+    </div>
+  </div>
+</footer>
+</div><!-- /#siteRoot -->
+
+<script src="assets/js/site.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Set theme before first paint to avoid a flash of the wrong theme -->
+<script>
+(function(){
+  try {
+    var stored = localStorage.getItem('theme');
+    if (!stored) {
+      var m = document.cookie.match(/(?:^|; )theme=(light|dark)/);
+      if (m) stored = m[1];
+    }
+    var theme = stored || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch(e) {}
+  try {
+    if (sessionStorage.getItem('bootSeen')) {
+      document.documentElement.setAttribute('data-boot', 'seen');
+    }
+  } catch(e) {}
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="assets/icons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="assets/icons/site.webmanifest">
+<meta name="theme-color" content="#121212">
+
+<title>Eric Rangel | Software Engineer &amp; AI Engineer</title>
+<meta name="description" content="Portfolio of Eric Rangel, Software Engineer &amp; AI Engineer specializing in RAG systems, LLM agents, and full-stack development.">
+
+<!-- Google Fonts: Chakra Petch (angular techno display, echoes the cut-corner UI) + Inter (readable body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/site.css">
+
+<style>
+/* Page-local overrides go here if ever needed — everything shared now
+   lives in assets/css/site.css. Kept as a hook, intentionally empty.
+   ============================================================ */
+</style>
+<noscript><style>.reveal-item{ opacity:1 !important; transform:none !important; } .reveal-bar{ width:120px !important; } .theme-toggle{ display:none !important; } .boot-screen, .konami-toast{ display:none !important; } .sysdiag-frame{ display:none !important; }</style></noscript>
+</head>
+<body data-page="home">
+
+<div class="boot-screen" id="bootScreen" aria-hidden="true">
+  <div class="boot-lines" id="bootLines"></div>
+</div>
+
+<div class="theme-fx" id="themeFx" aria-hidden="true"></div>
+
+<div class="konami-toast" id="konamiToast" aria-hidden="true">
+  <span class="led" aria-hidden="true"></span>
+  <span>+ KONAMI CODE ACCEPTED +</span>
+</div>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="bg-fx" aria-hidden="true">
+  <div class="grid"></div>
+  <div class="brushed"></div>
+  <div class="wash"></div>
+</div>
+
+<!-- =========================== NAV =========================== -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="#top" aria-label="Eric Rangel, home">
+      <span class="brand-mark" aria-hidden="true">ER</span>
+      ERIC&nbsp;RANGEL
+    </a>
+    <div class="nav-right">
+      <button id="themeToggle" class="theme-toggle" type="button" data-state="light" aria-pressed="true" aria-label="Switch to dark theme">
+        <span class="tt-track" aria-hidden="true">
+          <span class="tt-knob">
+            <svg class="tt-icon tt-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="5" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                <line x1="12" y1="1" x2="12" y2="4"/>
+                <line x1="12" y1="20" x2="12" y2="23"/>
+                <line x1="1" y1="12" x2="4" y2="12"/>
+                <line x1="20" y1="12" x2="23" y2="12"/>
+                <line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/>
+                <line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/>
+                <line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/>
+                <line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/>
+              </g>
+            </svg>
+            <svg class="tt-icon tt-moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5z" fill="currentColor"/>
+            </svg>
+          </span>
+        </span>
+        <span class="tt-label">LIGHT</span>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList" aria-label="Toggle navigation menu">
+        <span></span>
+      </button>
+      <nav aria-label="Primary">
+        <ul class="nav-list" id="navList">
+          <li><a href="#top" data-nav="top">Home</a></li>
+          <li><a href="#about" data-nav="about">About</a></li>
+          <li><a href="#projects" data-nav="projects">Work</a></li>
+          <li><a href="#experience" data-nav="experience">Experience</a></li>
+          <li><a href="#skills" data-nav="skills">Skills</a></li>
+          <li><a href="devlog.html" data-nav="devlog">Devlog</a></li>
+          <li><a href="resume.html" data-nav="resume">Résumé</a></li>
+          <li><a href="#contact" data-nav="contact">Contact</a></li>
+        </ul>
+      </nav>
+      <span class="fav-star" aria-hidden="true">★</span>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+    </div>
+  </div>
+</header>
+
+<!-- Wraps main+footer only (not the sticky nav) so the CRT power-on
+     animation's transform never breaks position:sticky. -->
+<div id="siteRoot">
+<main id="main">
+
+  <!-- =========================== HERO =========================== -->
+  <section id="top" class="hero">
+    <div class="wrap">
+
+      <div class="frame hero-frame">
+        <div class="panel-bar">
+          <span>PORTFOLIO.SYS // ERIC RANGEL v1.0</span>
+          <span class="led" aria-hidden="true"></span>
+        </div>
+        <div class="frame-body">
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span> OPEN TO OPPORTUNITIES</div>
+          <h1>ERIC RANGEL</h1>
+          <h2>Software Engineer&nbsp;&amp;&nbsp;AI Engineer</h2>
+          <p class="lead">I design and ship intelligent systems, from Retrieval-Augmented Generation pipelines and LLM agents to full-stack web applications, turning manual workflows into automated, production-ready tools.</p>
+          <p class="terminal-line" aria-hidden="true">&gt; loading_portfolio.exe // status: ready<span class="cursor-blink"></span></p>
+          <div class="hero-actions">
+            <a class="btn btn-chrome" href="#projects">View My Work ▸</a>
+            <a class="btn btn-ghost" href="./Eric%20Rangel%20-%20Resume%202026.pdf" download>Download Résumé ↓</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- =========================== ABOUT =========================== -->
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="section-tag">01 // Dossier</div>
+        <h2 class="section-title">About Me</h2>
+        <div class="reveal-bar"></div>
+      </div>
+
+      <div class="about-grid">
+        <div class="frame about-card reveal-item">
+          <div class="panel-bar"><span>DOSSIER.TXT</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <p>
+              Hello, my name is Eric Rangel. I've always been enamored with technology since I first started playing video games, collecting machines, and more. That passion drove me to pursue a degree in Computer Science. I use my passion and knowledge today to create software and set foundational standards with AI ethically.
+            </p>
+            <p>
+              A lot of my recent work has been focused on LLM agents. Automating processes, big and small, is super fun to me, and I love optimizing the workflow as best as I can.
+            </p>
+          </div>
+        </div>
+
+        <div class="frame about-facts reveal-item">
+          <h3 class="panel-bar v-amber"><span>QUICK_FACTS.DAT</span><span class="led" aria-hidden="true"></span></h3>
+          <dl class="frame-body">
+            <div class="fact-row"><dt>Focus</dt><dd>AI Engineering &amp; Full-Stack Dev</dd></div>
+            <div class="fact-row"><dt>Currently</dt><dd>AI Engineering Intern</dd></div>
+            <div class="fact-row"><dt>Education</dt><dd>B.S. Computer Science</dd></div>
+            <div class="fact-row"><dt>Expected Grad</dt><dd>May 2027</dd></div>
+            <div class="fact-row"><dt>GPA</dt><dd>3.9 / 4.0</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- =========================== PROJECTS =========================== -->
+  <section id="projects">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="section-tag">02 // Featured Work</div>
+        <h2 class="section-title">Projects</h2>
+        <div class="reveal-bar"></div>
+      </div>
+
+      <div class="project-grid">
+
+        <!-- Project: RL Snake Agent -->
+        <article class="frame project-card reveal-item">
+          <div class="panel-bar"><span>PROJECT_01.AI // Reinforcement Learning</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <h3>Reinforcement Learning Snake Agent</h3>
+            <p>Trained agents to master Snake from a pure reward signal alone, no labeled data required. Implemented a custom DQN (experience replay + target network) alongside PPO via Stable-Baselines3, then compared three reward-shaping strategies across a custom Gymnasium environment. PPO agents surpassed the 15-pellet success threshold, peaking around 46 pellets per episode.</p>
+            <div class="badge-row">
+              <span class="badge">Python</span>
+              <span class="badge">PyTorch</span>
+              <span class="badge">Gymnasium</span>
+              <span class="badge">Stable-Baselines3</span>
+              <span class="badge">PPO / DQN</span>
+              <span class="badge">Pygame</span>
+            </div>
+            <div class="project-links">
+              <a href="https://github.com/ericrangel776/rl-snake-agent" target="_blank" rel="noopener noreferrer">View Code →</a>
+              <a href="project-snake-agent.html">Full Write-Up →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project: ExpenseTracker -->
+        <article class="frame project-card reveal-item">
+          <div class="panel-bar v-amber"><span>PROJECT_02.WEB // Full-Stack App</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <h3>ExpenseTracker</h3>
+            <p>A personal finance tracker built on ASP.NET Core 8 MVC with a code-first EF Core / SQL Server backend. Features a live dashboard with doughnut and spline charts, category management with custom icons and colors, and full CRUD for transactions with server-side validation and CSRF protection.</p>
+            <div class="badge-row">
+              <span class="badge">C#</span>
+              <span class="badge">ASP.NET Core MVC</span>
+              <span class="badge">EF Core</span>
+              <span class="badge">SQL Server</span>
+              <span class="badge">Bootstrap 5</span>
+            </div>
+            <div class="project-links">
+              <a href="https://github.com/ericrangel776/expense-tracker" target="_blank" rel="noopener noreferrer">View Code →</a>
+              <a href="project-expense-tracker.html">Full Write-Up →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project: ABC Driving School Manager -->
+        <article class="frame project-card reveal-item">
+          <div class="panel-bar v-mint"><span>PROJECT_03.DB // Desktop / Database</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <h3>ABC Driving School Manager</h3>
+            <p>A WinForms desktop application for managing driving-school clients, staff, and class rosters. Connects to a SQL Server backend via ADO.NET, with data-bound grids that dynamically reload a person's class schedule as their client or staff ID is entered.</p>
+            <div class="badge-row">
+              <span class="badge">C#</span>
+              <span class="badge">WinForms</span>
+              <span class="badge">SQL Server</span>
+              <span class="badge">ADO.NET</span>
+            </div>
+            <div class="project-links">
+              <a href="https://github.com/ericrangel776/abc-driving-school-manager" target="_blank" rel="noopener noreferrer">View Code →</a>
+              <a href="project-driving-school.html">Full Write-Up →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project: Weather Forecast App -->
+        <article class="frame project-card reveal-item">
+          <div class="panel-bar v-rose"><span>PROJECT_04.JS // Front-End / API</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <h3>Real-Time Weather Forecast App</h3>
+            <p>A responsive weather lookup app built on vanilla JavaScript and Bootstrap 5, fetching live forecast data from a public weather API and rendering current conditions and outlook with clean, mobile-friendly UI.</p>
+            <div class="badge-row">
+              <span class="badge">JavaScript</span>
+              <span class="badge">HTML/CSS</span>
+              <span class="badge">Bootstrap 5</span>
+              <span class="badge">REST API</span>
+            </div>
+            <div class="project-links">
+              <a href="https://github.com/ericrangel776/weather-forecast-app" target="_blank" rel="noopener noreferrer">View Code →</a>
+              <a href="project-weather-app.html">Full Write-Up →</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- =========================== EXPERIENCE & EDUCATION =========================== -->
+  <section id="experience">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="section-tag">03 // Timeline</div>
+        <h2 class="section-title">Experience &amp; Education</h2>
+        <div class="reveal-bar"></div>
+      </div>
+
+      <div class="timeline">
+
+        <div class="tl-item reveal-item">
+          <div class="tl-meta">Jan 2026 - Present</div>
+          <h3>Artificial Intelligence Intern</h3>
+          <span class="tl-org">Datatelligent, Glen Ellyn, IL</span>
+          <ul>
+            <li>Architected a production-ready Intelligent Document Processing (IDP) pipeline using Vision Language Models and Agentic Document Extraction (ADE), converting manual workflows into schema-validated JSON and increasing processing capacity by 80%.</li>
+            <li>Engineered a Retrieval-Augmented Generation (RAG) system with LangChain and vector databases to centralize firm-wide knowledge, cutting information lookup time for consultants by 10+ hours/week.</li>
+            <li>Developed an end-to-end LLMOps pipeline with CircleCI, implementing automated model-graded evaluations and safety guardrails to prevent PII leakage and hallucinations.</li>
+            <li>Designed and scaled a browser-automation lead-generation pipeline across nearly 1,000 higher-ed institutions, matched against IPEDS data for a scored growth target list.</li>
+            <li>Prototyped multi-step AI agents in Python and LCEL to automate report generation and ticket triage.</li>
+          </ul>
+        </div>
+
+        <div class="tl-item reveal-item">
+          <div class="tl-meta">Jan 2024 - Jan 2026</div>
+          <h3>Circulation Clerk &amp; Tech Expert</h3>
+          <span class="tl-org">North Riverside Public Library, North Riverside, IL</span>
+          <ul>
+            <li>Resolved 95%+ of technology issues for patrons through clear, user-friendly troubleshooting across diverse hardware and software.</li>
+            <li>Managed the SWAN Library database to optimize regional connectivity and collaboration among Chicago-area suburban library systems.</li>
+            <li>Conducted tech-assistance workshops for Cantata Adult Life Services, achieving consistently high user satisfaction.</li>
+          </ul>
+        </div>
+
+        <div class="tl-item is-edu reveal-item">
+          <div class="tl-meta">2026 - Present</div>
+          <h3>AI Solutions Specialized Training</h3>
+          <span class="tl-org">DeepLearning.AI</span>
+          <ul>
+            <li>Completed intensive coursework in LLMOps, LangChain application development, production-ready RAG, and automated testing for LLMs.</li>
+          </ul>
+        </div>
+
+        <div class="tl-item is-edu reveal-item">
+          <div class="tl-meta">Expected May 2027</div>
+          <h3>B.S. Computer Science</h3>
+          <span class="tl-org">Dominican University, River Forest, IL</span>
+          <ul>
+            <li>GPA: 3.9 / 4.0 · Phi Theta Kappa Honor Society · Highest Level Transfer Merit Scholarship.</li>
+            <li>Relevant coursework: Algorithm Analysis &amp; Design, Data Structures, Database Design, Artificial Intelligence, Operating Systems, Data Science.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- =========================== SKILLS =========================== -->
+  <section id="skills">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="section-tag">04 // Capabilities</div>
+        <h2 class="section-title">Skills</h2>
+        <div class="reveal-bar"></div>
+      </div>
+
+      <div class="skills-grid">
+        <div class="frame skill-card reveal-item">
+          <h3 class="panel-bar"><span>AI &amp; Machine Learning</span><span class="led" aria-hidden="true"></span></h3>
+          <div class="frame-body tag-row">
+            <span class="tag">Retrieval-Augmented Generation (RAG)</span>
+            <span class="tag">Large Language Models (LLMs)</span>
+            <span class="tag">Prompt Engineering</span>
+            <span class="tag">Agentic Workflows</span>
+            <span class="tag">Vector Embeddings</span>
+          </div>
+        </div>
+
+        <div class="frame skill-card reveal-item">
+          <h3 class="panel-bar v-amber"><span>Frameworks &amp; Libraries</span><span class="led" aria-hidden="true"></span></h3>
+          <div class="frame-body tag-row">
+            <span class="tag">LangChain (LCEL)</span>
+            <span class="tag">OpenAI API</span>
+            <span class="tag">Vision Language Models (VLM)</span>
+            <span class="tag">Agentic Document Extraction (ADE)</span>
+          </div>
+        </div>
+
+        <div class="frame skill-card reveal-item">
+          <h3 class="panel-bar v-mint"><span>Engineering &amp; Ops</span><span class="led" aria-hidden="true"></span></h3>
+          <div class="frame-body tag-row">
+            <span class="tag">LLMOps</span>
+            <span class="tag">CI/CD (CircleCI)</span>
+            <span class="tag">Automated / Model-Graded Testing</span>
+            <span class="tag">SQL Server</span>
+            <span class="tag">Git</span>
+            <span class="tag">Linux (CLI)</span>
+          </div>
+        </div>
+
+        <div class="frame skill-card reveal-item">
+          <h3 class="panel-bar v-rose"><span>Software Development</span><span class="led" aria-hidden="true"></span></h3>
+          <div class="frame-body tag-row">
+            <span class="tag">Python</span>
+            <span class="tag">C#</span>
+            <span class="tag">Java</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">ASP.NET Core MVC</span>
+            <span class="tag">HTML/CSS</span>
+            <span class="tag">PHP</span>
+            <span class="tag">SSMS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- =========================== CONTACT =========================== -->
+  <section id="contact">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="section-tag">05 // Get In Touch</div>
+        <h2 class="section-title">Contact</h2>
+        <div class="reveal-bar"></div>
+      </div>
+
+      <div class="contact-grid">
+
+        <form class="frame contact-form reveal-item" id="contactForm" novalidate>
+          <div class="panel-bar"><span>TRANSMIT.FORM</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <div class="field">
+              <label for="cf-name">Name</label>
+              <input type="text" id="cf-name" name="name" required autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="cf-email">Email</label>
+              <input type="email" id="cf-email" name="email" required autocomplete="email">
+            </div>
+            <div class="field">
+              <label for="cf-message">Message</label>
+              <textarea id="cf-message" name="message" required></textarea>
+            </div>
+            <!-- Honeypot — hidden from real visitors via CSS, invisible to screen readers.
+                 Bots that fill every field trip this and get silently rejected server-side. -->
+            <div class="field" style="position:absolute; left:-9999px;" aria-hidden="true">
+              <label for="cf-hp">Leave this field empty</label>
+              <input type="text" id="cf-hp" name="hp" tabindex="-1" autocomplete="off">
+            </div>
+            <button type="submit" class="btn btn-chrome">Transmit Message ▸</button>
+            <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+            <p class="form-note">Sent directly to my inbox, so it reaches a real person, not a demo.</p>
+          </div>
+        </form>
+
+        <div class="frame contact-links reveal-item">
+          <div class="panel-bar v-amber"><span>CONTACT.LST</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+
+            <a class="social-link primary" href="https://www.linkedin.com/in/ericrangel776" target="_blank" rel="noopener noreferrer">
+              <span class="ico" aria-hidden="true">in</span>
+              <span>
+                <span class="label">LinkedIn</span>
+                <span class="value">linkedin.com/in/ericrangel776</span>
+              </span>
+            </a>
+
+            <a class="social-link" href="mailto:rangeleric776@gmail.com">
+              <span class="ico" aria-hidden="true">@</span>
+              <span>
+                <span class="label">Email</span>
+                <span class="value">rangeleric776@gmail.com</span>
+              </span>
+            </a>
+
+            <a class="social-link" href="https://github.com/ericrangel776" target="_blank" rel="noopener noreferrer">
+              <span class="ico" aria-hidden="true">&lt;/&gt;</span>
+              <span>
+                <span class="label">GitHub</span>
+                <span class="value">github.com/ericrangel776</span>
+              </span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-mark">// END TRANSMISSION</div>
+    <p>&copy; <span id="year"></span> Eric Rangel. Built with HTML, CSS &amp; vanilla JavaScript.</p>
+
+    <div class="foot-links">
+      <a href="devlog.html">Devlog</a><span class="sep">/</span>
+      <a href="resume.html">Résumé</a>
+    </div>
+
+    <div class="frame sysdiag-frame" title="Read from your own browser locally; nothing here is sent anywhere.">
+      <div class="panel-bar v-mint"><span>SYSTEM_DIAG.LOG</span><span class="led" aria-hidden="true"></span></div>
+      <dl class="sysdiag-grid sysdiag-body" id="sysDiag"></dl>
+    </div>
+
+    <div class="footer-badges">
+      <div class="hit-counter" title="A real, shared visit count, tracked server-side and not just in your browser.">
+        <span class="hc-label">Total Visits</span>
+        <span class="hc-digits" id="hitCounter">000000</span>
+      </div>
+      <div class="legacy-badge">OPTIMIZED FOR 1280×800 · ANY MODERN BROWSER</div>
+      <div class="badge88 v-cyan" title="Semantic, hand-checked markup, no framework scaffolding.">
+        <span class="b88-top">✓ VALID</span>
+        <span class="b88-bottom">HTML5</span>
+      </div>
+      <div class="badge88 v-amber" title="No site builder or template, every line written by hand.">
+        <span class="b88-top">100%</span>
+        <span class="b88-bottom">HAND-CODED</span>
+      </div>
+    </div>
+  </div>
+</footer>
+</div><!-- /#siteRoot -->
+
+<script src="assets/js/site.js"></script>
+
+</body>
+</html>

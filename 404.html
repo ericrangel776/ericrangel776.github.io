@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){
+  try {
+    var stored = localStorage.getItem('theme');
+    if (!stored) {
+      var m = document.cookie.match(/(?:^|; )theme=(light|dark)/);
+      if (m) stored = m[1];
+    }
+    var theme = stored || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch(e) {}
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="assets/icons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="assets/icons/site.webmanifest">
+<meta name="theme-color" content="#121212">
+
+<title>404 | Signal Lost</title>
+<meta name="description" content="Page not found.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/site.css">
+
+<style>
+.err-wrap{
+  min-height: 100vh;
+  display:flex; align-items:center; justify-content:center;
+  padding: 40px 20px;
+}
+.err-frame{ max-width: 560px; width:100%; }
+.err-frame .frame-body{ padding: 40px 36px; text-align:center; }
+.err-code{
+  font-family: var(--font-mono); color: var(--rose-deep);
+  font-size:.85rem; letter-spacing:.1em; margin-bottom: 14px;
+  text-shadow: 0 0 6px rgba(255,111,145,.4);
+}
+.err-frame h1{
+  font-size: clamp(1.6rem, 5vw, 2.3rem); margin-bottom: 14px;
+  background: var(--hero-h1-grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.err-frame p{ color: var(--paper-dim); }
+.err-actions{ display:flex; justify-content:center; gap:16px; margin-top: 22px; flex-wrap:wrap; }
+.err-static{
+  font-family: var(--font-mono); font-size:.7rem; letter-spacing:.05em;
+  color: var(--paper-faint); margin-top: 26px;
+}
+</style>
+</head>
+<body data-page="404">
+
+<div class="bg-fx" aria-hidden="true">
+  <div class="grid"></div>
+  <div class="brushed"></div>
+  <div class="wash"></div>
+</div>
+
+<div class="err-wrap">
+  <div class="frame err-frame">
+    <div class="panel-bar v-rose"><span>SYSTEM_ERROR.LOG</span><span class="led" aria-hidden="true"></span></div>
+    <div class="frame-body">
+      <div class="err-code">0x00000404 // SIGNAL LOST</div>
+      <h1>PAGE NOT FOUND</h1>
+      <p>The page you're looking for was moved, renamed, or never existed on this system. Let's get you back to a known-good state.</p>
+      <div class="err-actions">
+        <a class="btn btn-chrome" href="index.html#top">Return Home ▸</a>
+        <a class="btn btn-ghost" href="devlog.html">Read the Devlog</a>
+      </div>
+      <div class="err-static">TRACE: REQUESTED_RESOURCE_UNAVAILABLE · RETRY: N/A · STATUS: TERMINATED</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

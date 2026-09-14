@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Set theme before first paint to avoid a flash of the wrong theme -->
+<script>
+(function(){
+  try {
+    var stored = localStorage.getItem('theme');
+    if (!stored) {
+      var m = document.cookie.match(/(?:^|; )theme=(light|dark)/);
+      if (m) stored = m[1];
+    }
+    var theme = stored || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch(e) {}
+  try {
+    if (sessionStorage.getItem('bootSeen')) {
+      document.documentElement.setAttribute('data-boot', 'seen');
+    }
+  } catch(e) {}
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="assets/icons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="assets/icons/site.webmanifest">
+<meta name="theme-color" content="#121212">
+
+<title>Devlog | Eric Rangel</title>
+<meta name="description" content="Dated notes on what Eric Rangel is building and learning: LLM agents, RAG systems, and automation experiments.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/site.css">
+
+<style></style>
+<noscript><style>.reveal-item{ opacity:1 !important; transform:none !important; } .reveal-bar{ width:120px !important; } .theme-toggle{ display:none !important; } .boot-screen, .konami-toast{ display:none !important; } .sysdiag-frame{ display:none !important; }</style></noscript>
+</head>
+<body data-page="devlog">
+
+<div class="boot-screen" id="bootScreen" aria-hidden="true">
+  <div class="boot-lines" id="bootLines"></div>
+</div>
+
+<div class="theme-fx" id="themeFx" aria-hidden="true"></div>
+
+<div class="konami-toast" id="konamiToast" aria-hidden="true">
+  <span class="led" aria-hidden="true"></span>
+  <span>+ KONAMI CODE ACCEPTED +</span>
+</div>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="bg-fx" aria-hidden="true">
+  <div class="grid"></div>
+  <div class="brushed"></div>
+  <div class="wash"></div>
+</div>
+
+<!-- =========================== NAV =========================== -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="index.html#top" aria-label="Eric Rangel, home">
+      <span class="brand-mark" aria-hidden="true">ER</span>
+      ERIC&nbsp;RANGEL
+    </a>
+    <div class="nav-right">
+      <button id="themeToggle" class="theme-toggle" type="button" data-state="light" aria-pressed="true" aria-label="Switch to dark theme">
+        <span class="tt-track" aria-hidden="true">
+          <span class="tt-knob">
+            <svg class="tt-icon tt-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="5" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                <line x1="12" y1="1" x2="12" y2="4"/>
+                <line x1="12" y1="20" x2="12" y2="23"/>
+                <line x1="1" y1="12" x2="4" y2="12"/>
+                <line x1="20" y1="12" x2="23" y2="12"/>
+                <line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/>
+                <line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/>
+                <line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/>
+                <line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/>
+              </g>
+            </svg>
+            <svg class="tt-icon tt-moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5z" fill="currentColor"/>
+            </svg>
+          </span>
+        </span>
+        <span class="tt-label">LIGHT</span>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList" aria-label="Toggle navigation menu">
+        <span></span>
+      </button>
+      <nav aria-label="Primary">
+        <ul class="nav-list" id="navList">
+          <li><a href="index.html#top" data-nav="top">Home</a></li>
+          <li><a href="index.html#about" data-nav="about">About</a></li>
+          <li><a href="index.html#projects" data-nav="projects">Work</a></li>
+          <li><a href="index.html#experience" data-nav="experience">Experience</a></li>
+          <li><a href="index.html#skills" data-nav="skills">Skills</a></li>
+          <li><a href="devlog.html" data-nav="devlog">Devlog</a></li>
+          <li><a href="resume.html" data-nav="resume">Résumé</a></li>
+          <li><a href="index.html#contact" data-nav="contact">Contact</a></li>
+        </ul>
+      </nav>
+      <span class="fav-star" aria-hidden="true">★</span>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+    </div>
+  </div>
+</header>
+
+<div id="siteRoot">
+<main id="main">
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="section-tag">SYSTEM.LOG</div>
+      <h1>Devlog</h1>
+      <p class="lead">Short, dated notes on what I'm building and learning: mostly LLM agents, RAG systems, and whatever workflow I've most recently tried to automate.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="devlog-list">
+
+        <article class="frame devlog-entry reveal-item">
+          <div class="panel-bar"><span>ENTRY_005.LOG</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <span class="dl-date">2026.08.22 // 09:14</span>
+            <h3>Model-graded evals catch what unit tests can't</h3>
+            <p>Spent this week tightening the eval suite for a document-extraction pipeline. Schema validation catches malformed JSON, but it says nothing about whether the extracted values are actually <em>correct</em>. Added a second pass where a grading model compares extracted fields against source text and flags low-confidence matches for human review. Caught several silent field-mapping errors that every existing test was blind to.</p>
+            <div class="tag-row">
+              <span class="tag">LLMOps</span>
+              <span class="tag">Evaluation</span>
+              <span class="tag">CircleCI</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="frame devlog-entry reveal-item">
+          <div class="panel-bar v-amber"><span>ENTRY_004.LOG</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <span class="dl-date">2026.07.30 // 21:02</span>
+            <h3>Chunking strategy matters more than the embedding model</h3>
+            <p>Swapped embedding models twice this month chasing better retrieval accuracy before realizing the real issue was upstream: fixed-size chunking was splitting answers across chunk boundaries. Moved to a structure-aware splitter that respects headings and list boundaries, and retrieval quality improved more from that one change than from any model swap.</p>
+            <div class="tag-row">
+              <span class="tag">RAG</span>
+              <span class="tag">Vector Embeddings</span>
+              <span class="tag">LangChain</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="frame devlog-entry reveal-item">
+          <div class="panel-bar v-mint"><span>ENTRY_003.LOG</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <span class="dl-date">2026.07.11 // 16:40</span>
+            <h3>Guardrails as a pipeline stage, not an afterthought</h3>
+            <p>Started treating PII detection and hallucination checks as a required stage in the pipeline rather than a wrapper bolted on at the end. It's a small architectural shift, but it means every new pipeline inherits the safety checks by default instead of someone having to remember to add them.</p>
+            <div class="tag-row">
+              <span class="tag">LLMOps</span>
+              <span class="tag">Guardrails</span>
+              <span class="tag">Python</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="frame devlog-entry reveal-item">
+          <div class="panel-bar v-rose"><span>ENTRY_002.LOG</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <span class="dl-date">2026.06.18 // 11:27</span>
+            <h3>Agents are easier to debug when they narrate</h3>
+            <p>Rebuilt a multi-step LCEL agent to log its intermediate reasoning to a structured trace instead of just the final output. When something goes wrong three steps into a chain, staring at the final answer tells you nothing. The trace turns debugging from guesswork into just reading a log.</p>
+            <div class="tag-row">
+              <span class="tag">Agentic Workflows</span>
+              <span class="tag">LCEL</span>
+              <span class="tag">Debugging</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="frame devlog-entry reveal-item">
+          <div class="panel-bar"><span>ENTRY_001.LOG</span><span class="led" aria-hidden="true"></span></div>
+          <div class="frame-body">
+            <span class="dl-date">2026.05.30 // 20:03</span>
+            <h3>First entry: why a devlog</h3>
+            <p>Starting this mostly for myself: a running record of the small decisions and dead ends behind the bigger projects, since those rarely make it into a résumé bullet. If you're reading this, welcome to the log.</p>
+            <div class="tag-row">
+              <span class="tag">Meta</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-mark">// END TRANSMISSION</div>
+    <p>&copy; <span id="year"></span> Eric Rangel. Built with HTML, CSS &amp; vanilla JavaScript.</p>
+    <div class="foot-links">
+      <a href="index.html#top">Home</a><span class="sep">/</span>
+      <a href="resume.html">Résumé</a>
+    </div>
+    <div class="footer-badges">
+      <div class="hit-counter" title="A real, shared visit count, tracked server-side and not just in your browser.">
+        <span class="hc-label">Total Visits</span>
+        <span class="hc-digits" id="hitCounter">000000</span>
+      </div>
+      <div class="legacy-badge">OPTIMIZED FOR 1280×800 · ANY MODERN BROWSER</div>
+    </div>
+  </div>
+</footer>
+</div><!-- /#siteRoot -->
+
+<script src="assets/js/site.js"></script>
+
+</body>
+</html>

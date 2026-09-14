@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Set theme before first paint to avoid a flash of the wrong theme -->
+<script>
+(function(){
+  try {
+    var stored = localStorage.getItem('theme');
+    if (!stored) {
+      var m = document.cookie.match(/(?:^|; )theme=(light|dark)/);
+      if (m) stored = m[1];
+    }
+    var theme = stored || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch(e) {}
+  try {
+    if (sessionStorage.getItem('bootSeen')) {
+      document.documentElement.setAttribute('data-boot', 'seen');
+    }
+  } catch(e) {}
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="assets/icons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="assets/icons/site.webmanifest">
+<meta name="theme-color" content="#121212">
+
+<title>Résumé — Eric Rangel</title>
+<meta name="description" content="Eric Rangel's résumé — Software Engineer &amp; AI Engineer specializing in RAG systems, LLM agents, and full-stack development.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/site.css">
+
+<style>
+/* Résumé-specific: a clean printable layout, hidden chrome when printing */
+.resume-frame .frame-body{ padding: 34px 38px; }
+.resume-block{ margin-bottom: 28px; }
+.resume-block:last-child{ margin-bottom: 0; }
+.resume-block h2{
+  font-size: 1rem; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--text-cyan); margin-bottom: 14px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.resume-entry{ margin-bottom: 18px; }
+.resume-entry:last-child{ margin-bottom: 0; }
+.resume-entry-head{
+  display:flex; flex-wrap:wrap; justify-content:space-between; gap: 8px;
+  margin-bottom: 4px;
+}
+.resume-entry-head h3{ font-size: 1rem; margin:0; }
+.resume-entry-head .when{
+  font-family: var(--font-mono); font-size:.78rem; color: var(--paper-faint); white-space:nowrap;
+}
+.resume-entry .org{ color: var(--text-amber); font-weight:700; font-size:.9rem; display:block; margin-bottom: 6px; }
+.resume-entry ul{ margin-top: 6px; }
+.resume-entry li{ position:relative; padding-left:18px; margin-bottom:6px; color: var(--paper-dim); font-size:.92rem; }
+.resume-entry li::before{ content:"+"; position:absolute; left:0; color: var(--text-amber); font-weight:700; }
+.resume-actions{ display:flex; flex-wrap:wrap; gap:16px; margin: 22px 0 6px; }
+
+@media print{
+  .navbar, footer, .boot-screen, .theme-fx, .konami-toast, .bg-fx, .page-hero .back-link, .resume-actions{ display:none !important; }
+  body{ background:#fff; color:#000; }
+  .resume-frame{ border:none; box-shadow:none; }
+  .resume-frame .panel-bar{ display:none; }
+  a{ color:#000; text-decoration: underline; }
+}
+</style>
+<noscript><style>.reveal-item{ opacity:1 !important; transform:none !important; } .reveal-bar{ width:120px !important; } .theme-toggle{ display:none !important; } .boot-screen, .konami-toast{ display:none !important; } .sysdiag-frame{ display:none !important; }</style></noscript>
+</head>
+<body data-page="resume">
+
+<div class="boot-screen" id="bootScreen" aria-hidden="true">
+  <div class="boot-lines" id="bootLines"></div>
+</div>
+
+<div class="theme-fx" id="themeFx" aria-hidden="true"></div>
+
+<div class="konami-toast" id="konamiToast" aria-hidden="true">
+  <span class="led" aria-hidden="true"></span>
+  <span>+ KONAMI CODE ACCEPTED +</span>
+</div>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="bg-fx" aria-hidden="true">
+  <div class="grid"></div>
+  <div class="brushed"></div>
+  <div class="wash"></div>
+</div>
+
+<!-- =========================== NAV =========================== -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="index.html#top" aria-label="Eric Rangel — home">
+      <span class="brand-mark" aria-hidden="true">ER</span>
+      ERIC&nbsp;RANGEL
+    </a>
+    <div class="nav-right">
+      <button id="themeToggle" class="theme-toggle" type="button" data-state="light" aria-pressed="true" aria-label="Switch to dark theme">
+        <span class="tt-track" aria-hidden="true">
+          <span class="tt-knob">
+            <svg class="tt-icon tt-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="5" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                <line x1="12" y1="1" x2="12" y2="4"/>
+                <line x1="12" y1="20" x2="12" y2="23"/>
+                <line x1="1" y1="12" x2="4" y2="12"/>
+                <line x1="20" y1="12" x2="23" y2="12"/>
+                <line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/>
+                <line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/>
+                <line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/>
+                <line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/>
+              </g>
+            </svg>
+            <svg class="tt-icon tt-moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5z" fill="currentColor"/>
+            </svg>
+          </span>
+        </span>
+        <span class="tt-label">LIGHT</span>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList" aria-label="Toggle navigation menu">
+        <span></span>
+      </button>
+      <nav aria-label="Primary">
+        <ul class="nav-list" id="navList">
+          <li><a href="index.html#top" data-nav="top">Home</a></li>
+          <li><a href="index.html#about" data-nav="about">About</a></li>
+          <li><a href="index.html#projects" data-nav="projects">Work</a></li>
+          <li><a href="index.html#experience" data-nav="experience">Experience</a></li>
+          <li><a href="index.html#skills" data-nav="skills">Skills</a></li>
+          <li><a href="devlog.html" data-nav="devlog">Devlog</a></li>
+          <li><a href="resume.html" data-nav="resume">Résumé</a></li>
+          <li><a href="index.html#contact" data-nav="contact">Contact</a></li>
+        </ul>
+      </nav>
+      <span class="fav-star" aria-hidden="true">★</span>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+    </div>
+  </div>
+</header>
+
+<div id="siteRoot">
+<main id="main">
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="section-tag">RÉSUMÉ.DOC</div>
+      <h1>Eric Rangel</h1>
+      <p class="lead">Software Engineer &amp; AI Engineer — RAG systems, LLM agents, and full-stack development. The same content as the PDF, in page form so it's linkable, searchable, and prints cleanly.</p>
+      <div class="resume-actions">
+        <a class="btn btn-chrome" href="./Eric%20Rangel%20-%20Resume%202026.pdf" download>Download PDF ↓</a>
+        <a class="btn btn-ghost" href="mailto:rangeleric776@gmail.com">Email Me ▸</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="frame resume-frame reveal-item is-visible">
+        <div class="panel-bar"><span>RESUME.TXT — read-only</span><span class="led" aria-hidden="true"></span></div>
+        <div class="frame-body">
+
+          <div class="resume-block">
+            <h2>Summary</h2>
+            <p style="color:var(--paper-dim); margin:0;">I design and ship intelligent systems — from Retrieval-Augmented Generation pipelines and LLM agents to full-stack web applications — turning manual workflows into automated, production-ready tools. Currently focused on LLMOps, agentic document processing, and applying AI ethically and responsibly.</p>
+          </div>
+
+          <div class="resume-block">
+            <h2>Experience</h2>
+
+            <div class="resume-entry">
+              <div class="resume-entry-head">
+                <h3>Artificial Intelligence Intern</h3>
+                <span class="when">Jan 2026 — Present</span>
+              </div>
+              <span class="org">Datatelligent — Glen Ellyn, IL</span>
+              <ul>
+                <li>Architected a production-ready Intelligent Document Processing (IDP) pipeline using Vision Language Models and Agentic Document Extraction (ADE), converting manual workflows into schema-validated JSON and increasing processing capacity by 80%.</li>
+                <li>Engineered a Retrieval-Augmented Generation (RAG) system with LangChain and vector databases to centralize firm-wide knowledge, cutting information lookup time for consultants by 10+ hours/week.</li>
+                <li>Developed an end-to-end LLMOps pipeline with CircleCI, implementing automated model-graded evaluations and safety guardrails to prevent PII leakage and hallucinations.</li>
+                <li>Designed and scaled a browser-automation lead-generation pipeline across nearly 1,000 higher-ed institutions, matched against IPEDS data for a scored growth target list.</li>
+                <li>Prototyped multi-step AI agents in Python and LCEL to automate report generation and ticket triage.</li>
+              </ul>
+            </div>
+
+            <div class="resume-entry">
+              <div class="resume-entry-head">
+                <h3>Circulation Clerk &amp; Tech Expert</h3>
+                <span class="when">Jan 2024 — Jan 2026</span>
+              </div>
+              <span class="org">North Riverside Public Library — North Riverside, IL</span>
+              <ul>
+                <li>Resolved 95%+ of technology issues for patrons through clear, user-friendly troubleshooting across diverse hardware and software.</li>
+                <li>Managed the SWAN Library database to optimize regional connectivity and collaboration among Chicago-area suburban library systems.</li>
+                <li>Conducted tech-assistance workshops for Cantata Adult Life Services, achieving consistently high user satisfaction.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="resume-block">
+            <h2>Education</h2>
+
+            <div class="resume-entry">
+              <div class="resume-entry-head">
+                <h3>B.S. Computer Science</h3>
+                <span class="when">Expected May 2027</span>
+              </div>
+              <span class="org">Dominican University — River Forest, IL</span>
+              <ul>
+                <li>GPA: 3.9 / 4.0 · Phi Theta Kappa Honor Society · Highest Level Transfer Merit Scholarship.</li>
+                <li>Relevant coursework: Algorithm Analysis &amp; Design, Data Structures, Database Design, Artificial Intelligence, Operating Systems, Data Science.</li>
+              </ul>
+            </div>
+
+            <div class="resume-entry">
+              <div class="resume-entry-head">
+                <h3>AI Solutions Specialized Training</h3>
+                <span class="when">2026 — Present</span>
+              </div>
+              <span class="org">DeepLearning.AI</span>
+              <ul>
+                <li>Completed intensive coursework in LLMOps, LangChain application development, production-ready RAG, and automated testing for LLMs.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="resume-block">
+            <h2>Skills</h2>
+            <div class="tag-row">
+              <span class="tag">Retrieval-Augmented Generation (RAG)</span>
+              <span class="tag">Large Language Models (LLMs)</span>
+              <span class="tag">Prompt Engineering</span>
+              <span class="tag">Agentic Workflows</span>
+              <span class="tag">Vector Embeddings</span>
+              <span class="tag">LangChain (LCEL)</span>
+              <span class="tag">OpenAI API</span>
+              <span class="tag">Vision Language Models (VLM)</span>
+              <span class="tag">Agentic Document Extraction (ADE)</span>
+              <span class="tag">LLMOps</span>
+              <span class="tag">CI/CD (CircleCI)</span>
+              <span class="tag">Automated / Model-Graded Testing</span>
+              <span class="tag">SQL Server</span>
+              <span class="tag">Git</span>
+              <span class="tag">Linux (CLI)</span>
+              <span class="tag">Python</span>
+              <span class="tag">C#</span>
+              <span class="tag">Java</span>
+              <span class="tag">JavaScript</span>
+              <span class="tag">ASP.NET Core MVC</span>
+              <span class="tag">HTML/CSS</span>
+              <span class="tag">PHP</span>
+              <span class="tag">SSMS</span>
+            </div>
+          </div>
+
+          <div class="resume-block">
+            <h2>Contact</h2>
+            <div class="tag-row">
+              <span class="tag">rangeleric776@gmail.com</span>
+              <span class="tag">linkedin.com/in/ericrangel776</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-mark">// END TRANSMISSION</div>
+    <p>&copy; <span id="year"></span> Eric Rangel. Built with HTML, CSS &amp; vanilla JavaScript.</p>
+    <div class="foot-links">
+      <a href="index.html#top">Home</a><span class="sep">/</span>
+      <a href="devlog.html">Devlog</a>
+    </div>
+    <div class="footer-badges">
+      <div class="hit-counter" title="A real, shared visit count — tracked server-side, not just in your browser.">
+        <span class="hc-label">Total Visits</span>
+        <span class="hc-digits" id="hitCounter">000000</span>
+      </div>
+      <div class="legacy-badge">OPTIMIZED FOR 1280×800 · ANY MODERN BROWSER</div>
+    </div>
+  </div>
+</footer>
+</div><!-- /#siteRoot -->
+
+<script src="assets/js/site.js"></script>
+
+</body>
+</html>

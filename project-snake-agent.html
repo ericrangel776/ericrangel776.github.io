@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){
+  try {
+    var stored = localStorage.getItem('theme');
+    if (!stored) {
+      var m = document.cookie.match(/(?:^|; )theme=(light|dark)/);
+      if (m) stored = m[1];
+    }
+    var theme = stored || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch(e) {}
+  try {
+    if (sessionStorage.getItem('bootSeen')) {
+      document.documentElement.setAttribute('data-boot', 'seen');
+    }
+  } catch(e) {}
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="assets/icons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="assets/icons/site.webmanifest">
+<meta name="theme-color" content="#121212">
+
+<title>RL Snake Agent | Eric Rangel</title>
+<meta name="description" content="Case study: training DQN and PPO reinforcement learning agents to master Snake from a pure reward signal.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/site.css">
+
+<style></style>
+<noscript><style>.reveal-item{ opacity:1 !important; transform:none !important; } .reveal-bar{ width:120px !important; } .theme-toggle{ display:none !important; } .boot-screen, .konami-toast{ display:none !important; } .sysdiag-frame{ display:none !important; }</style></noscript>
+</head>
+<body data-page="project-snake">
+
+<div class="boot-screen" id="bootScreen" aria-hidden="true">
+  <div class="boot-lines" id="bootLines"></div>
+</div>
+
+<div class="theme-fx" id="themeFx" aria-hidden="true"></div>
+
+<div class="konami-toast" id="konamiToast" aria-hidden="true">
+  <span class="led" aria-hidden="true"></span>
+  <span>+ KONAMI CODE ACCEPTED +</span>
+</div>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="bg-fx" aria-hidden="true">
+  <div class="grid"></div>
+  <div class="brushed"></div>
+  <div class="wash"></div>
+</div>
+
+<header class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="index.html#top" aria-label="Eric Rangel, home">
+      <span class="brand-mark" aria-hidden="true">ER</span>
+      ERIC&nbsp;RANGEL
+    </a>
+    <div class="nav-right">
+      <button id="themeToggle" class="theme-toggle" type="button" data-state="light" aria-pressed="true" aria-label="Switch to dark theme">
+        <span class="tt-track" aria-hidden="true">
+          <span class="tt-knob">
+            <svg class="tt-icon tt-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="5" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                <line x1="12" y1="1" x2="12" y2="4"/>
+                <line x1="12" y1="20" x2="12" y2="23"/>
+                <line x1="1" y1="12" x2="4" y2="12"/>
+                <line x1="20" y1="12" x2="23" y2="12"/>
+                <line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/>
+                <line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/>
+                <line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/>
+                <line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/>
+              </g>
+            </svg>
+            <svg class="tt-icon tt-moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5z" fill="currentColor"/>
+            </svg>
+          </span>
+        </span>
+        <span class="tt-label">LIGHT</span>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList" aria-label="Toggle navigation menu">
+        <span></span>
+      </button>
+      <nav aria-label="Primary">
+        <ul class="nav-list" id="navList">
+          <li><a href="index.html#top" data-nav="top">Home</a></li>
+          <li><a href="index.html#about" data-nav="about">About</a></li>
+          <li><a href="index.html#projects" data-nav="projects">Work</a></li>
+          <li><a href="index.html#experience" data-nav="experience">Experience</a></li>
+          <li><a href="index.html#skills" data-nav="skills">Skills</a></li>
+          <li><a href="devlog.html" data-nav="devlog">Devlog</a></li>
+          <li><a href="resume.html" data-nav="resume">Résumé</a></li>
+          <li><a href="index.html#contact" data-nav="contact">Contact</a></li>
+        </ul>
+      </nav>
+      <span class="fav-star" aria-hidden="true">★</span>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+    </div>
+  </div>
+</header>
+
+<div id="siteRoot">
+<main id="main">
+
+  <section class="page-hero">
+    <div class="wrap">
+      <a class="back-link" href="index.html#projects">← Back to Work</a>
+      <div class="section-tag">PROJECT_01.AI // Reinforcement Learning</div>
+      <h1>Reinforcement Learning Snake Agent</h1>
+      <p class="lead">Training agents to master Snake from nothing but a reward signal: no labeled data, no human demonstrations.</p>
+      <div class="case-meta">
+        <span class="badge">Python</span>
+        <span class="badge">PyTorch</span>
+        <span class="badge">Gymnasium</span>
+        <span class="badge">Stable-Baselines3</span>
+        <span class="badge">PPO / DQN</span>
+        <span class="badge">Pygame</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="frame case-frame reveal-item is-visible">
+        <div class="panel-bar"><span>CASE_STUDY.TXT</span><span class="led" aria-hidden="true"></span></div>
+        <div class="frame-body">
+
+          <h2>Overview</h2>
+          <p>Snake is a deceptively hard reinforcement learning benchmark: the agent starts with no notion of "food," "wall," or "self-collision." It sees only a grid of pixels and a score. This project builds that understanding from scratch, comparing two very different RL algorithms, a custom Deep Q-Network and Proximal Policy Optimization, against each other on the same environment.</p>
+
+          <div class="stat-row">
+            <div class="stat-box"><div class="num">46</div><div class="lbl">Peak Pellets / Episode</div></div>
+            <div class="stat-box"><div class="num">15+</div><div class="lbl">Success Threshold Beaten</div></div>
+            <div class="stat-box"><div class="num">3</div><div class="lbl">Reward Strategies Compared</div></div>
+          </div>
+
+          <h2>The Problem</h2>
+          <p>Off-the-shelf Gymnasium environments don't include Snake, so the first task was building one: grid state representation, collision detection, food spawning, and a reward function, all of which directly determine whether an agent can learn anything useful at all. A poorly shaped reward signal (e.g. rewarding survival time alone) trains an agent that avoids food entirely, since dying ends the episode and stalling doesn't.</p>
+
+          <h2>Architecture &amp; Approach</h2>
+          <p>Built a custom Gymnasium environment exposing the grid as an observation space, then trained two families of agents against it:</p>
+          <ul>
+            <li><strong>Custom DQN:</strong> implemented from scratch in PyTorch with experience replay and a separate target network to stabilize Q-value updates.</li>
+            <li><strong>PPO:</strong> via Stable-Baselines3, using a clipped surrogate objective for more stable policy updates than vanilla policy gradient methods.</li>
+          </ul>
+          <p>The most important variable turned out not to be the algorithm, but the reward shaping. Three strategies were tested head-to-head:</p>
+          <div class="code-block">reward_strategies = {
+    "sparse":     {"food": +10, "death": -10, "step": 0},
+    "shaped":     {"food": +10, "death": -10, "step": -0.01, "closer_to_food": +0.1},
+    "aggressive": {"food": +10, "death": -15, "step": -0.02, "closer_to_food": +0.2},
+}</div>
+          <p>The sparse reward struggled to bootstrap any learning signal in a reasonable number of episodes. With no intermediate feedback, most early trajectories end in random death long before the agent stumbles onto food by chance. Adding a small per-step penalty plus a distance-to-food shaping term gave the agent something to climb even before it had ever found food.</p>
+
+          <h2>Results</h2>
+          <p>PPO agents trained with the shaped reward surpassed the 15-pellet success threshold and peaked around 46 pellets in a single episode, well beyond what the DQN implementation reached under the same training budget, likely due to PPO's more stable updates on a reward landscape this noisy.</p>
+
+          <h2>What I'd Do Differently</h2>
+          <ul>
+            <li>Add frame-stacking or a small recurrent layer. A single-frame observation gives the agent no sense of its own momentum, which likely capped how far reward shaping alone could take it.</li>
+            <li>Run a proper hyperparameter sweep instead of manual tuning. The reward-shaping comparison ate most of the compute budget for this pass.</li>
+          </ul>
+
+        </div>
+      </div>
+
+      <div class="case-nav">
+        <a class="btn btn-ghost" href="index.html#projects">← All Projects</a>
+        <a class="btn btn-ghost" href="project-expense-tracker.html">Next: ExpenseTracker →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-mark">// END TRANSMISSION</div>
+    <p>&copy; <span id="year"></span> Eric Rangel. Built with HTML, CSS &amp; vanilla JavaScript.</p>
+    <div class="foot-links">
+      <a href="index.html#top">Home</a><span class="sep">/</span>
+      <a href="devlog.html">Devlog</a><span class="sep">/</span>
+      <a href="resume.html">Résumé</a>
+    </div>
+    <div class="footer-badges">
+      <div class="hit-counter" title="A real, shared visit count, tracked server-side and not just in your browser.">
+        <span class="hc-label">Total Visits</span>
+        <span class="hc-digits" id="hitCounter">000000</span>
+      </div>
+      <div class="legacy-badge">OPTIMIZED FOR 1280×800 · ANY MODERN BROWSER</div>
+    </div>
+  </div>
+</footer>
+</div><!-- /#siteRoot -->
+
+<script src="assets/js/site.js"></script>
+
+</body>
+</html>
