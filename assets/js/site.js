@@ -294,7 +294,7 @@
 
   // ---------- Contact form (sends via Formspree — no backend required) ----------
   // Sign up at https://formspree.io, create a form, and paste its endpoint here.
-  var CONTACT_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+  var CONTACT_ENDPOINT = 'https://formspree.io/f/mrpgnrzz';
 
   var form = document.getElementById('contactForm');
   var status = document.getElementById('formStatus');
