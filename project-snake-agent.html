@@ -31,6 +31,21 @@
 
 <title>RL Snake Agent | Eric Rangel</title>
 <meta name="description" content="Case study: training DQN and PPO reinforcement learning agents to master Snake from a pure reward signal.">
+<link rel="canonical" href="https://ericrangel776.github.io/project-snake-agent.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Eric Rangel">
+<meta property="og:title" content="RL Snake Agent | Eric Rangel">
+<meta property="og:description" content="Case study: training DQN and PPO reinforcement learning agents to master Snake from a pure reward signal.">
+<meta property="og:url" content="https://ericrangel776.github.io/project-snake-agent.html">
+<meta property="og:image" content="https://ericrangel776.github.io/assets/images/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RL Snake Agent | Eric Rangel">
+<meta name="twitter:description" content="Case study: training DQN and PPO reinforcement learning agents to master Snake from a pure reward signal.">
+<meta name="twitter:image" content="https://ericrangel776.github.io/assets/images/og-image.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -143,6 +158,11 @@
       <div class="frame case-frame reveal-item is-visible">
         <div class="panel-bar"><span>CASE_STUDY.TXT</span><span class="led" aria-hidden="true"></span></div>
         <div class="frame-body">
+
+          <figure class="case-shot">
+            <img src="assets/images/projects/snake-agent.webp" width="1009" height="698" loading="lazy" alt="The custom Gymnasium environment mid-episode: a green snake several segments long navigating a black grid toward a red food pellet.">
+            <figcaption>Custom Gymnasium environment, rendered with Pygame, mid-episode.</figcaption>
+          </figure>
 
           <h2>Overview</h2>
           <p>Snake is a deceptively hard reinforcement learning benchmark: the agent starts with no notion of "food," "wall," or "self-collision." It sees only a grid of pixels and a score. This project builds that understanding from scratch, comparing two very different RL algorithms, a custom Deep Q-Network and Proximal Policy Optimization, against each other on the same environment.</p>
