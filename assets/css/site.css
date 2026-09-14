@@ -22,7 +22,7 @@
 
   --paper:        #eeeeee;
   --paper-dim:    #a8a8a8;
-  --paper-faint:  #787878;
+  --paper-faint:  #838383;
 
   --line:         #3a3a3a;
   --line-strong:  #545454;
@@ -1126,7 +1126,7 @@ footer .foot-mark{
   font-family: var(--font-mono); font-size:.72rem; letter-spacing:.08em;
   color: var(--text-mint); margin-bottom: 10px; display:block;
 }
-.devlog-entry h3{ font-size: 1.1rem; margin-bottom: 10px; }
+.devlog-entry h2{ font-size: 1.1rem; margin-bottom: 10px; }
 .devlog-entry p{ color: var(--paper-dim); font-size:.95rem; }
 .devlog-entry .tag-row{ margin-top: 14px; }
 

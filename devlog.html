@@ -154,7 +154,7 @@
           <div class="panel-bar"><span>ENTRY_005.LOG</span><span class="led" aria-hidden="true"></span></div>
           <div class="frame-body">
             <span class="dl-date">2026.08.22 // 09:14</span>
-            <h3>Model-graded evals catch what unit tests can't</h3>
+            <h2>Model-graded evals catch what unit tests can't</h2>
             <p>Spent this week tightening the eval suite for a document-extraction pipeline. Schema validation catches malformed JSON, but it says nothing about whether the extracted values are actually <em>correct</em>. Added a second pass where a grading model compares extracted fields against source text and flags low-confidence matches for human review. Caught several silent field-mapping errors that every existing test was blind to.</p>
             <div class="tag-row">
               <span class="tag">LLMOps</span>
@@ -168,7 +168,7 @@
           <div class="panel-bar v-amber"><span>ENTRY_004.LOG</span><span class="led" aria-hidden="true"></span></div>
           <div class="frame-body">
             <span class="dl-date">2026.07.30 // 21:02</span>
-            <h3>Chunking strategy matters more than the embedding model</h3>
+            <h2>Chunking strategy matters more than the embedding model</h2>
             <p>Swapped embedding models twice this month chasing better retrieval accuracy before realizing the real issue was upstream: fixed-size chunking was splitting answers across chunk boundaries. Moved to a structure-aware splitter that respects headings and list boundaries, and retrieval quality improved more from that one change than from any model swap.</p>
             <div class="tag-row">
               <span class="tag">RAG</span>
@@ -182,7 +182,7 @@
           <div class="panel-bar v-mint"><span>ENTRY_003.LOG</span><span class="led" aria-hidden="true"></span></div>
           <div class="frame-body">
             <span class="dl-date">2026.07.11 // 16:40</span>
-            <h3>Guardrails as a pipeline stage, not an afterthought</h3>
+            <h2>Guardrails as a pipeline stage, not an afterthought</h2>
             <p>Started treating PII detection and hallucination checks as a required stage in the pipeline rather than a wrapper bolted on at the end. It's a small architectural shift, but it means every new pipeline inherits the safety checks by default instead of someone having to remember to add them.</p>
             <div class="tag-row">
               <span class="tag">LLMOps</span>
@@ -196,7 +196,7 @@
           <div class="panel-bar v-rose"><span>ENTRY_002.LOG</span><span class="led" aria-hidden="true"></span></div>
           <div class="frame-body">
             <span class="dl-date">2026.06.18 // 11:27</span>
-            <h3>Agents are easier to debug when they narrate</h3>
+            <h2>Agents are easier to debug when they narrate</h2>
             <p>Rebuilt a multi-step LCEL agent to log its intermediate reasoning to a structured trace instead of just the final output. When something goes wrong three steps into a chain, staring at the final answer tells you nothing. The trace turns debugging from guesswork into just reading a log.</p>
             <div class="tag-row">
               <span class="tag">Agentic Workflows</span>
@@ -210,7 +210,7 @@
           <div class="panel-bar"><span>ENTRY_001.LOG</span><span class="led" aria-hidden="true"></span></div>
           <div class="frame-body">
             <span class="dl-date">2026.05.30 // 20:03</span>
-            <h3>First entry: why a devlog</h3>
+            <h2>First entry: why a devlog</h2>
             <p>Starting this mostly for myself: a running record of the small decisions and dead ends behind the bigger projects, since those rarely make it into a résumé bullet. If you're reading this, welcome to the log.</p>
             <div class="tag-row">
               <span class="tag">Meta</span>
