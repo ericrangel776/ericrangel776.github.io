@@ -2,7 +2,7 @@
   "name": "eric-rangel-portfolio-server",
   "version": "1.0.0",
   "private": true,
-  "description": "Static file server + small API (contact form email, shared guestbook, shared hit counter) for the portfolio site.",
+  "description": "Static file server + small API (contact form email, shared hit counter) for the portfolio site.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

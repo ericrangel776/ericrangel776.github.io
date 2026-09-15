@@ -43,12 +43,10 @@
 
   --mint:         #7cfc9a;
   --mint-deep:    #3ecf6c;
-  --mint-tint:    rgba(124,252,154,.12);
   --text-mint:    #7cfc9a;
 
   --rose:         #ff6f91;
   --rose-deep:    #e0435f;
-  --rose-tint:    rgba(255,111,145,.12);
 
   --navbar-bg:
     repeating-linear-gradient(125deg, rgba(255,255,255,.03) 0 2px, transparent 2px 6px),
@@ -1018,24 +1016,10 @@ footer .foot-mark{
 .sysdiag-grid dt{ margin:0; color: #7a8a7a; letter-spacing:.04em; }
 .sysdiag-grid dd{ margin:0; color: var(--mint, #7cfc9a); text-align:right; text-shadow: 0 0 5px rgba(124,252,154,.4); }
 
-/* Classic 88x31 webmaster badges — the iconic Y2K "web button" size */
-.badge88{
-  width:88px; height:31px; flex:none;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  font-family: var(--font-display); font-weight:700;
-  line-height:1.2; text-align:center;
-  border:1px solid var(--line-strong);
-  transition: border-color .35s ease, color .35s ease, background .35s ease;
-}
-.badge88 .b88-top{ font-size:.62rem; letter-spacing:.04em; }
-.badge88 .b88-bottom{ font-size:.52rem; letter-spacing:.03em; opacity:.85; }
-.badge88.v-cyan{ background: linear-gradient(180deg, var(--cyan-tint), var(--bg-panel-2)); color: var(--text-cyan); border-color: var(--cyan-deep); }
-.badge88.v-amber{ background: linear-gradient(180deg, var(--amber-tint), var(--bg-panel-2)); color: var(--text-amber); border-color: var(--amber-deep); }
-
 /* ============================================================
    PAGE HEADER — shared eyebrow+title block for interior pages
-   (devlog, résumé, guestbook, project detail) that aren't the
-   scrolling homepage.
+   (devlog, résumé, project detail) that aren't the scrolling
+   homepage.
    ============================================================ */
 .page-hero{ padding: 52px 0 20px; }
 .page-hero .section-tag{ margin-bottom: 10px; }
@@ -1137,23 +1121,3 @@ footer .foot-mark{
 .devlog-entry h2{ font-size: 1.1rem; margin-bottom: 10px; }
 .devlog-entry p{ color: var(--paper-dim); font-size:.95rem; }
 .devlog-entry .tag-row{ margin-top: 14px; }
-
-/* ============================================================
-   GUESTBOOK
-   ============================================================ */
-.guestbook-form .frame-body{ padding: 24px 26px; }
-.gb-list{ display:flex; flex-direction:column; gap: 14px; margin-top: 4px; }
-.gb-entry{
-  border: 1px solid var(--line-strong);
-  background: var(--bg-panel-2);
-  padding: 14px 16px;
-}
-.gb-entry .gb-head{
-  display:flex; justify-content:space-between; gap: 10px; flex-wrap:wrap;
-  font-family: var(--font-display); font-size:.72rem; font-weight:700;
-  letter-spacing:.06em; text-transform:uppercase;
-  color: var(--text-cyan); margin-bottom: 6px;
-}
-.gb-entry .gb-time{ color: var(--paper-faint); font-weight:500; text-transform:none; letter-spacing:0; font-family: var(--font-mono); }
-.gb-entry p{ color: var(--paper-dim); font-size:.9rem; margin:0; }
-.gb-empty{ color: var(--paper-faint); font-size:.9rem; font-style: italic; }
