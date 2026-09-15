@@ -313,6 +313,7 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
    ============================================================ */
 .bg-fx{
   position: fixed; inset:0; z-index:0; pointer-events:none;
+  transform: translateZ(0); /* own compositor layer: not re-rasterized on scroll */
 }
 .bg-fx .grid{
   position:absolute; inset:0;
@@ -324,10 +325,13 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
 }
 .bg-fx .brushed{
   position:absolute; inset:0;
-  background: repeating-linear-gradient(
-    to bottom, var(--bgfx-brush) 0px, var(--bgfx-brush) 1px,
-    transparent 1px, transparent 3px
-  );
+  background-color: var(--bgfx-brush);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3'%3E%3Crect width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3'%3E%3Crect width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-size: 1px 3px;
+  mask-size: 1px 3px;
 }
 .bg-fx .wash{
   position:absolute; inset:0;
@@ -356,10 +360,14 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
 }
 .frame::before{
   content:""; position:absolute; inset:0; pointer-events:none;
-  background: repeating-linear-gradient(
-    to bottom, var(--frame-scan) 0px, var(--frame-scan) 1px,
-    transparent 1px, transparent 3px
-  );
+  transform: translateZ(0);
+  background-color: var(--frame-scan);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3'%3E%3Crect width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3'%3E%3Crect width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-size: 1px 3px;
+  mask-size: 1px 3px;
 }
 /* Resize-grip corner accent — like an old OS window's drag handle */
 .frame::after{
