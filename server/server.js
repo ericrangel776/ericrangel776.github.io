@@ -33,8 +33,8 @@ function isEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-// Applies to the public write endpoints only — reading the guestbook or
-// hit count is unlimited, submitting to them is throttled per IP.
+// Applies to the public write endpoints only — reading the hit count is
+// unlimited, submitting the contact form is throttled per IP.
 const postLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   limit: 8,
@@ -43,31 +43,16 @@ const postLimiter = rateLimit({
   message: { ok: false, error: 'Too many requests — please try again in a bit.' },
 });
 
-// ---------- API: shared hit counter ----------
+// ---------- API: shared hit counter, contact form ----------
+// The live site currently gets its hit count from a third-party counter API
+// and its contact form from Formspree (see assets/js/site.js), so nothing
+// calls these routes in production today. Left in place — and kept
+// working — in case the site moves back to self-hosting either one.
 app.post('/api/hits', (req, res) => {
   res.json({ count: store.incrementHits() });
 });
 app.get('/api/hits', (req, res) => {
   res.json({ count: store.getHits() });
-});
-
-// ---------- API: shared guestbook ----------
-app.get('/api/guestbook', (req, res) => {
-  res.json({ entries: store.getGuestbookEntries().slice().reverse() });
-});
-
-app.post('/api/guestbook', postLimiter, (req, res) => {
-  const body = req.body || {};
-  if (body.hp) return res.status(400).json({ ok: false, error: 'Rejected.' }); // honeypot field
-
-  const name = clean(body.name, 60);
-  const message = clean(body.message, 280);
-  if (!name || !message) {
-    return res.status(400).json({ ok: false, error: 'Name and message are required.' });
-  }
-
-  const entries = store.addGuestbookEntry({ name, message, time: new Date().toISOString() });
-  res.status(201).json({ ok: true, entries: entries.slice().reverse() });
 });
 
 // ---------- API: contact form (real email delivery) ----------
@@ -94,8 +79,8 @@ app.post('/api/contact', postLimiter, async (req, res) => {
 
 // ---------- Static site ----------
 // extensions:['html'] lets a stray extensionless request (e.g. a cached
-// redirect from an old dev server, or a manually typed /guestbook) still
-// resolve — real links in the site always use the explicit .html path.
+// redirect from an old dev server) still resolve — real links in the site
+// always use the explicit .html path.
 app.use(express.static(ROOT_DIR, { extensions: ['html'] }));
 
 // Anything unmatched (including bad routes under /api/*) gets the retro 404 page / JSON.
