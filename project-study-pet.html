@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){
+  try {
+    var stored = localStorage.getItem('theme');
+    if (!stored) {
+      var m = document.cookie.match(/(?:^|; )theme=(light|dark)/);
+      if (m) stored = m[1];
+    }
+    var theme = stored || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch(e) {}
+  try {
+    if (sessionStorage.getItem('bootSeen')) {
+      document.documentElement.setAttribute('data-boot', 'seen');
+    }
+  } catch(e) {}
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/icons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="assets/icons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="assets/icons/site.webmanifest">
+<meta name="theme-color" content="#121212">
+
+<title>Study Pet | Eric Rangel</title>
+<meta name="description" content="Case study: Study Pet, an installable, offline-first virtual pet that grows as you finish focused study sessions. Vanilla JavaScript, canvas pixel art, and a fully tested pet engine.">
+<link rel="canonical" href="https://ericrangel776.github.io/project-study-pet.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Eric Rangel">
+<meta property="og:title" content="Study Pet | Eric Rangel">
+<meta property="og:description" content="Case study: Study Pet, an installable, offline-first virtual pet that grows as you finish focused study sessions. Vanilla JavaScript, canvas pixel art, and a fully tested pet engine.">
+<meta property="og:url" content="https://ericrangel776.github.io/project-study-pet.html">
+<meta property="og:image" content="https://ericrangel776.github.io/assets/images/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Study Pet | Eric Rangel">
+<meta name="twitter:description" content="Case study: Study Pet, an installable, offline-first virtual pet that grows as you finish focused study sessions. Vanilla JavaScript, canvas pixel art, and a fully tested pet engine.">
+<meta name="twitter:image" content="https://ericrangel776.github.io/assets/images/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/site.css">
+
+<style></style>
+<noscript><style>.reveal-item{ opacity:1 !important; transform:none !important; } .reveal-bar{ width:120px !important; } .theme-toggle{ display:none !important; } .boot-screen, .konami-toast{ display:none !important; } .sysdiag-frame{ display:none !important; }</style></noscript>
+</head>
+<body data-page="project-study-pet">
+
+<div class="boot-screen" id="bootScreen" aria-hidden="true">
+  <div class="boot-lines" id="bootLines"></div>
+</div>
+
+<div class="theme-fx" id="themeFx" aria-hidden="true"></div>
+
+<div class="konami-toast" id="konamiToast" aria-hidden="true">
+  <span class="led" aria-hidden="true"></span>
+  <span>+ KONAMI CODE ACCEPTED +</span>
+</div>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="bg-fx" aria-hidden="true">
+  <div class="grid"></div>
+  <div class="brushed"></div>
+  <div class="wash"></div>
+</div>
+
+<header class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="index.html#top" aria-label="Eric Rangel, home">
+      <span class="brand-mark" aria-hidden="true">ER</span>
+      ERIC&nbsp;RANGEL
+    </a>
+    <div class="nav-right">
+      <button id="themeToggle" class="theme-toggle" type="button" data-state="light" aria-pressed="true" aria-label="Switch to dark theme">
+        <span class="tt-track" aria-hidden="true">
+          <span class="tt-knob">
+            <svg class="tt-icon tt-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="5" fill="currentColor"/>
+              <g stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                <line x1="12" y1="1" x2="12" y2="4"/>
+                <line x1="12" y1="20" x2="12" y2="23"/>
+                <line x1="1" y1="12" x2="4" y2="12"/>
+                <line x1="20" y1="12" x2="23" y2="12"/>
+                <line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/>
+                <line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/>
+                <line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/>
+                <line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/>
+              </g>
+            </svg>
+            <svg class="tt-icon tt-moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5z" fill="currentColor"/>
+            </svg>
+          </span>
+        </span>
+        <span class="tt-label">LIGHT</span>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navList" aria-label="Toggle navigation menu">
+        <span></span>
+      </button>
+      <nav aria-label="Primary">
+        <ul class="nav-list" id="navList">
+          <li><a href="index.html#top" data-nav="top">Home</a></li>
+          <li><a href="index.html#about" data-nav="about">About</a></li>
+          <li><a href="index.html#projects" data-nav="projects">Work</a></li>
+          <li><a href="index.html#experience" data-nav="experience">Experience</a></li>
+          <li><a href="index.html#skills" data-nav="skills">Skills</a></li>
+          <li><a href="devlog.html" data-nav="devlog">Devlog</a></li>
+          <li><a href="resume.html" data-nav="resume">Résumé</a></li>
+          <li><a href="index.html#contact" data-nav="contact">Contact</a></li>
+        </ul>
+      </nav>
+      <span class="fav-star" aria-hidden="true">★</span>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+      <span>OPEN TO OPPORTUNITIES</span><span>AI ENGINEERING</span><span>RAG SYSTEMS</span><span>LLM AGENTS</span><span>FULL-STACK DEVELOPMENT</span><span>PYTHON // C# // JAVASCRIPT</span>
+    </div>
+  </div>
+</header>
+
+<div id="siteRoot">
+<main id="main">
+
+  <section class="page-hero">
+    <div class="wrap">
+      <a class="back-link" href="index.html#projects">← Back to Work</a>
+      <div class="section-tag">PROJECT_01.PWA // Progressive Web App</div>
+      <h1>Study Pet</h1>
+      <p class="lead">A virtual pet that grows when you finish focused study sessions. It installs like an app, works offline, and keeps every byte of your progress on your own device.</p>
+      <div class="case-meta">
+        <span class="badge">JavaScript</span>
+        <span class="badge">Canvas</span>
+        <span class="badge">PWA / Service Worker</span>
+        <span class="badge">Node Test Runner</span>
+        <span class="badge">Playwright</span>
+        <span class="badge">GitHub Actions</span>
+      </div>
+      <div class="project-links">
+        <a href="https://ericrangel776.github.io/study-pet/" target="_blank" rel="noopener noreferrer">Try It Live →</a>
+        <a href="https://github.com/ericrangel776/study-pet" target="_blank" rel="noopener noreferrer">View Code →</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="frame case-frame reveal-item is-visible">
+        <div class="panel-bar v-rose"><span>CASE_STUDY.TXT</span><span class="led" aria-hidden="true"></span></div>
+        <div class="frame-body">
+
+          <figure class="case-shot">
+            <img src="assets/images/projects/study-pet.webp" width="1400" height="820" loading="lazy" alt="Study Pet running in the browser: a purple handheld device with a pixel-art pet on its LCD screen, next to a panel with focus and break lengths, streak and session counters, and a weekly focus chart.">
+            <figcaption>A freshly hatched pet after its first focus session.</figcaption>
+          </figure>
+
+          <h2>Overview</h2>
+          <p>Study Pet wraps a Pomodoro timer in a handheld virtual pet. Each finished focus session feeds the pet and moves it toward its next growth stage; twenty sessions raise it to a grown-up, which unseals a printable certificate and moves the pet into an Album so a new egg can start. Along the way there are unlockable notes, lifetime stickers, treats for meeting a daily goal, holiday outfits and collectible device shells.</p>
+          <p>It is a plain, framework-free web app: ES modules, a canvas renderer for the LCD screen, and a small build script that bundles everything into a single installable <code>index.html</code>. There are no runtime dependencies.</p>
+
+          <h2>The Problem</h2>
+          <p>Focus timers work, but they are easy to stop opening. Streak apps try to fix that with guilt: miss a day and you lose everything. I wanted the opposite, a reason to come back that rewards consistency without punishing a bad week. So the pet gets sleepy if you skip a few days, but it never goes away.</p>
+          <p>There was also a privacy goal. A study companion learns a lot about someone's habits, and I didn't want any of that sitting on a server.</p>
+
+          <h2>Architecture &amp; Approach</h2>
+          <p>The pet's rules live in a pure engine module (<code>engine.js</code>) with no screen code at all: hearts, growth stages, streaks, breaks, treats, unlocks and backups are all functions from state to state. That made the rules easy to test exhaustively and kept the 1,100-line UI layer focused on wiring and drawing.</p>
+          <p>Every pet is generated from a random seed that picks its shape, markings, ears, tail and topper, revealed one stage at a time. Study habits can override the later traits as they arrive, so the pet ends up reflecting how you actually studied:</p>
+          <div class="code-block">export function habitTrait(s, trait) {
+  const avg = s.sessions ? s.minutes / s.sessions : 0;
+  if (trait === "ears" &amp;&amp; avg >= 40) return { value: "bunny", reason: "from all those long sessions" };
+  if (trait === "ears" &amp;&amp; s.sessions &amp;&amp; avg <= 15) return { value: "antennae", reason: "from all those quick sessions" };
+  if (trait === "tail" &amp;&amp; s.bestStreak >= 5) return { value: "fluffy", reason: `from studying ${s.bestStreak} days in a row` };
+  if (trait === "topper" &amp;&amp; s.bestStreak >= 7) return { value: "star", reason: `for that ${s.bestStreak}-day streak` };
+  if (trait === "topper" &amp;&amp; s.minutes >= 600) return { value: "leaves", reason: "from 10 hours of focus" };
+  return null;
+}</div>
+          <p>Because there is no backend, a few features needed creative plumbing:</p>
+          <ul>
+            <li><strong>Moving devices.</strong> The whole save is serialized, compressed with the browser's built-in <code>CompressionStream</code> (deflate-raw), and packed into a link. A hand-written QR encoder (byte mode, versions 1 to 40) turns that link into a code the other device can scan.</li>
+            <li><strong>Invite links.</strong> A friend's invite can carry a welcome message, notes, an accessory and a sealed certificate message. All of it rides after the <code>#</code> in the URL, which browsers never send to a server.</li>
+            <li><strong>Offline and installable.</strong> A service worker caches the app and its fonts, and the manifest lets it install on desktop, Android and iOS home screens.</li>
+            <li><strong>Swappable storage.</strong> Saving sits behind a two-method <code>load()</code> / <code>save()</code> interface, so a synced backend could replace <code>localStorage</code> without touching the rest of the app.</li>
+          </ul>
+
+          <h2>Testing &amp; Delivery</h2>
+          <p>The engine, holiday dates and move links are covered by about 80 tests on Node's built-in test runner; the QR tests decode every generated code back with jsQR to prove it scans. On top of that, around 70 Playwright browser tests drive the built app at both desktop and phone sizes. GitHub Actions runs everything on each pull request, and a push to <code>main</code> only publishes to GitHub Pages if the checks pass.</p>
+
+          <h2>Results</h2>
+          <p>The app is live, installable, and in maintenance mode. It went from first commit to a polished release in under two weeks, built through a series of reviewed pull requests: the core engine and renderer, goals and habits, a hardware-style device redesign, holidays and stickers, adjustable breaks, a full UI audit, and finally the collectible shells.</p>
+
+          <h2>What I'd Do Differently</h2>
+          <ul>
+            <li>Split <code>ui.js</code> into smaller per-panel modules earlier. It grew to over a thousand lines because every new feature needed a little wiring there.</li>
+            <li>Add an optional synced store behind the existing storage interface, so progress follows you between devices without a move link.</li>
+          </ul>
+
+        </div>
+      </div>
+
+      <div class="case-nav">
+        <a class="btn btn-ghost" href="index.html#projects">← All Projects</a>
+        <a class="btn btn-ghost" href="project-snake-agent.html">Next: RL Snake Agent →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-mark">// END TRANSMISSION</div>
+    <p>&copy; <span id="year"></span> Eric Rangel. Built with HTML, CSS &amp; vanilla JavaScript.</p>
+    <div class="foot-links">
+      <a href="index.html#top">Home</a><span class="sep">/</span>
+      <a href="devlog.html">Devlog</a><span class="sep">/</span>
+      <a href="resume.html">Résumé</a>
+    </div>
+    <div class="footer-badges">
+      <div class="hit-counter" title="A real, shared visit count, tracked server-side and not just in your browser.">
+        <span class="hc-label">Total Visits</span>
+        <span class="hc-digits" id="hitCounter">000000</span>
+      </div>
+      <div class="legacy-badge">OPTIMIZED FOR 1280×800 · ANY MODERN BROWSER</div>
+    </div>
+  </div>
+</footer>
+</div><!-- /#siteRoot -->
+
+<script src="assets/js/site.js"></script>
+
+</body>
+</html>
