@@ -20,75 +20,46 @@
       });
   }
 
-  // ---------- Boot sequence (once per tab session, skippable) ----------
+  // ---------- Boot sequence (home page, once per tab session, skippable) ----------
   (function bootSequence(){
     var screen = document.getElementById('bootScreen');
-    var lines = document.getElementById('bootLines');
-    if (!screen || !lines) return;
+    if (!screen) return;
 
     var alreadySeen = false;
     try { alreadySeen = !!sessionStorage.getItem('bootSeen'); } catch (e) {}
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    try { sessionStorage.setItem('bootSeen', '1'); } catch (e) {}
 
-    function finish(){
-      screen.classList.add('hide');
-      try { sessionStorage.setItem('bootSeen', '1'); } catch (e) {}
-      document.removeEventListener('keydown', finish);
-      document.removeEventListener('click', finish);
-
-      // The page "switches on" — same flicker sweep as the theme toggle,
-      // plus a CRT unfold (squished bright line expanding to full height).
-      var fx = document.getElementById('themeFx');
-      var siteRoot = document.getElementById('siteRoot');
-      if (fx) {
-        fx.classList.remove('active');
-        void fx.offsetWidth;
-        fx.classList.add('active');
-      }
-      if (siteRoot) {
-        siteRoot.classList.remove('crt-on');
-        void siteRoot.offsetWidth;
-        siteRoot.classList.add('crt-on');
-      }
-
-      setTimeout(function(){ screen.style.display = 'none'; }, 180);
-      if (fx) setTimeout(function(){ fx.classList.remove('active'); }, 520);
-      if (siteRoot) setTimeout(function(){ siteRoot.classList.remove('crt-on'); }, 620);
-    }
-
-    if (alreadySeen || reduceMotion) {
+    // Only the home page plays it, but arriving on any page turns the
+    // "TV" on, so it never plays partway through a visit.
+    var isHome = document.body.getAttribute('data-page') === 'home';
+    if (alreadySeen || reduceMotion || !isHome) {
       screen.style.display = 'none';
-      try { sessionStorage.setItem('bootSeen', '1'); } catch (e) {}
       return;
     }
 
-    document.addEventListener('keydown', finish);
-    document.addEventListener('click', finish);
-
-    var script = [
-      'PORTFOLIO.SYS v1.0',
-      'INITIALIZING SYSTEM...',
-      'LOADING MODULES: ABOUT / WORK / EXPERIENCE / SKILLS / CONTACT... OK',
-      'ESTABLISHING CONNECTION...',
-      'WELCOME, USER.'
-    ];
-    var out = '';
-    var li = 0, ci = 0;
-
-    function typeChar(){
-      if (li >= script.length) { setTimeout(finish, 350); return; }
-      var line = script[li];
-      if (ci <= line.length) {
-        lines.innerHTML = out + line.slice(0, ci) + '<span class="cur"></span>';
-        ci++;
-        setTimeout(typeChar, 14);
-      } else {
-        out += line + '\n';
-        li++; ci = 0;
-        setTimeout(typeChar, 160);
-      }
+    // The CRT turn-on itself is pure CSS and starts with the page.
+    // This only removes the overlay when it ends, or fades it out early
+    // on a click or key press.
+    var fallback = setTimeout(done, 1200);
+    function done(){
+      clearTimeout(fallback);
+      screen.style.display = 'none';
+      screen.removeEventListener('animationend', onEnd);
+      document.removeEventListener('keydown', skip);
+      document.removeEventListener('click', skip);
     }
-    typeChar();
+    function onEnd(e){
+      if (e.target === screen && e.animationName === 'crtGlow') done();
+    }
+    function skip(){
+      screen.classList.add('hide');
+      setTimeout(done, 180);
+    }
+
+    screen.addEventListener('animationend', onEnd);
+    document.addEventListener('keydown', skip);
+    document.addEventListener('click', skip);
   })();
 
   // ---------- Konami code easter egg ----------
