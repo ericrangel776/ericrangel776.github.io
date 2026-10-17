@@ -780,6 +780,7 @@ section{ padding: 64px 0; position: relative; }
 .project-grid{
   display:grid; grid-template-columns: repeat(2, 1fr); gap: 22px;
 }
+.project-card.is-featured{ grid-column: 1 / -1; }
 .project-card{
   transition: transform .3s ease, box-shadow .3s ease;
 }
