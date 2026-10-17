@@ -207,38 +207,71 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 /* ============================================================
-   BOOT SEQUENCE — a brief BIOS/POST-style intro, once per tab
-   session. Always dark/terminal regardless of site theme (it
-   represents "before the OS loads"). Skippable via any key/click.
+   BOOT SEQUENCE — a CRT tube switching on, home page only, once
+   per tab session (the TV stays on while browsing other pages).
+   A dot of light stretches into a bright horizontal line, then two
+   black halves part from that line to reveal the page, with a glow
+   in the gap and a last flicker as the tube settles. Covers the
+   whole viewport (nav included) without transforming the page, so
+   position:sticky is untouched. Skippable via any key/click.
    ============================================================ */
 .boot-screen{
+  --crt-time: .85s;
   position: fixed; inset:0; z-index:10000;
-  background: #050505;
-  color: var(--mint, #7cfc9a);
-  font-family: var(--font-mono);
-  font-size: clamp(.85rem, 2vw, 1.05rem);
-  line-height: 1.7;
-  padding: 10vh 6vw 0;
   cursor: pointer;
   opacity: 1;
   transition: opacity .16s ease;
+  animation: crtGlow var(--crt-time) linear both;
+}
+.boot-screen::before,
+.boot-screen::after{
+  content:""; position:absolute; left:0; right:0; height: 50.5%;
+  background: #050505;
+}
+.boot-screen::before{ top:0;    animation: crtOpenTop    var(--crt-time) cubic-bezier(.2,.7,.2,1) both; }
+.boot-screen::after { bottom:0; animation: crtOpenBottom var(--crt-time) cubic-bezier(.2,.7,.2,1) both; }
+.crt-beam{
+  position:absolute; left:0; right:0; top:50%; z-index:1;
+  height:3px; margin-top:-1.5px;
+  background:#fff;
+  box-shadow: 0 0 12px 3px rgba(200,255,225,.9), 0 0 48px 12px rgba(124,252,154,.35);
+  animation: crtBeam var(--crt-time) cubic-bezier(.3,.6,.3,1) both;
 }
 .boot-screen.hide{ opacity: 0; pointer-events: none; }
-.boot-lines{ white-space: pre-wrap; text-shadow: 0 0 6px rgba(124,252,154,.5); }
-.boot-lines .cur{
-  display:inline-block; width:.55em; height:1em; background: var(--mint, #7cfc9a);
-  margin-left:2px; vertical-align:-2px;
-  animation: blink 1s steps(1) infinite;
-}
-html[data-boot="seen"] .boot-screen{ display:none; }
+html[data-boot="seen"] .boot-screen,
+body:not([data-page="home"]) .boot-screen{ display:none; }
+@media (prefers-reduced-motion: reduce){ .boot-screen{ display:none; } }
 
-/* CRT power-on reveal — the moment the boot screen clears, the page
-   itself "switches on": squished to a bright line, then unfolds to
-   full height with a brightness bloom and a slight tube-snap overshoot.
-   Scoped to #siteRoot (main+footer only) so the sticky nav is never
-   transformed, which would otherwise break position:sticky. */
-#siteRoot{ transform: none; filter: none; transform-origin: 50% 50%; }
-#siteRoot.crt-on{ animation: crtPowerOn .6s cubic-bezier(.25,.46,.45,.94); }
+@keyframes crtBeam{
+  0%   { transform: scaleX(0)    scaleY(1); opacity:0; }
+  14%  { transform: scaleX(.004) scaleY(1); opacity:1; }
+  38%  { transform: scaleX(1)    scaleY(1); opacity:1; }
+  50%  { transform: scaleX(1)    scaleY(3); opacity:.85; }
+  70%  { transform: scaleX(1)    scaleY(6); opacity:0; }
+  100% { transform: scaleX(1)    scaleY(6); opacity:0; }
+}
+@keyframes crtOpenTop{
+  0%, 38% { transform: translateY(0); }
+  72%, 100% { transform: translateY(-101%); }
+}
+@keyframes crtOpenBottom{
+  0%, 38% { transform: translateY(0); }
+  72%, 100% { transform: translateY(101%); }
+}
+/* The glow behind the halves: a bright bloom as the picture opens,
+   then one quick flicker before it settles. */
+@keyframes crtGlow{
+  0%, 38% { background-color: rgba(235,255,240,0); }
+  44%  { background-color: rgba(235,255,240,.55); }
+  72%  { background-color: rgba(235,255,240,.1); }
+  80%  { background-color: rgba(235,255,240,0); }
+  86%  { background-color: rgba(235,255,240,.12); }
+  92%, 100% { background-color: rgba(235,255,240,0); }
+}
+
+/* CRT power-on: squished to a bright line, then unfolding to full
+   height with a brightness bloom. Used by the page-to-page view
+   transition below. */
 @keyframes crtPowerOn{
   0%   { transform: scaleY(.005) scaleX(1.04); filter: brightness(3) saturate(1.5); }
   25%  { transform: scaleY(.04)  scaleX(1.02); filter: brightness(2.2); }
