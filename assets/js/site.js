@@ -20,7 +20,7 @@
       });
   }
 
-  // ---------- Boot sequence (home page, once per tab session, skippable) ----------
+  // ---------- Boot sequence (first page of a tab session, skippable) ----------
   (function bootSequence(){
     var screen = document.getElementById('bootScreen');
     if (!screen) return;
@@ -30,10 +30,7 @@
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     try { sessionStorage.setItem('bootSeen', '1'); } catch (e) {}
 
-    // Only the home page plays it, but arriving on any page turns the
-    // "TV" on, so it never plays partway through a visit.
-    var isHome = document.body.getAttribute('data-page') === 'home';
-    if (alreadySeen || reduceMotion || !isHome) {
+    if (alreadySeen || reduceMotion) {
       screen.style.display = 'none';
       return;
     }

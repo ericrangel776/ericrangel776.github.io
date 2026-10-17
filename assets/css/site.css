@@ -207,8 +207,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 /* ============================================================
-   BOOT SEQUENCE — a CRT tube switching on, home page only, once
-   per tab session (the TV stays on while browsing other pages).
+   BOOT SEQUENCE — a CRT tube switching on, on whichever page a
+   tab lands first; the TV then stays on while browsing other pages.
    A dot of light stretches into a bright horizontal line, then two
    black halves part from that line to reveal the page, with a glow
    in the gap and a last flicker as the tube settles. Covers the
@@ -238,8 +238,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   animation: crtBeam var(--crt-time) cubic-bezier(.3,.6,.3,1) both;
 }
 .boot-screen.hide{ opacity: 0; pointer-events: none; }
-html[data-boot="seen"] .boot-screen,
-body:not([data-page="home"]) .boot-screen{ display:none; }
+html[data-boot="seen"] .boot-screen{ display:none; }
 @media (prefers-reduced-motion: reduce){ .boot-screen{ display:none; } }
 
 @keyframes crtBeam{
