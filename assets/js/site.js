@@ -20,6 +20,50 @@
       });
   }
 
+  // ---------- Ticker: seamless loop at any screen width ----------
+  // The CSS loop slides the track left by half its width, so each half
+  // must be at least as wide as the screen or a blank gap scrolls in.
+  // Repeat the phrases until it is, keep the speed constant in px/s, and
+  // tie the position to the clock so it carries on across page loads.
+  (function tickerLoop(){
+    var ticker = document.querySelector('.ticker');
+    var track = ticker && ticker.querySelector('.ticker-track');
+    if (!track || !track.children.length) return;
+
+    var SPEED = 40;   // px per second, about the original pace
+    var phrases = Array.prototype.slice.call(track.children, 0, track.children.length / 2);
+    var lastWidth = -1;
+
+    function appendSet(){
+      phrases.forEach(function(p){ track.appendChild(p.cloneNode(true)); });
+    }
+
+    function build(){
+      track.textContent = '';
+      appendSet();
+      var setWidth = track.getBoundingClientRect().width;
+      if (!setWidth) return;
+      var copies = Math.max(1, Math.ceil(ticker.clientWidth / setWidth));
+      for (var i = 1; i < copies * 2; i++) appendSet();
+
+      var duration = (setWidth * copies) / SPEED;
+      track.style.animationDuration = duration.toFixed(2) + 's';
+      track.style.animationDelay = (-(Date.now() / 1000) % duration).toFixed(2) + 's';
+      lastWidth = ticker.clientWidth;
+    }
+
+    build();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(build);
+
+    var resizeTimer = null;
+    window.addEventListener('resize', function(){
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function(){
+        if (ticker.clientWidth !== lastWidth) build();
+      }, 150);
+    });
+  })();
+
   // ---------- Boot sequence (first page of a tab session, skippable) ----------
   (function bootSequence(){
     var screen = document.getElementById('bootScreen');
