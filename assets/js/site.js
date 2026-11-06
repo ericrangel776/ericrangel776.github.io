@@ -24,21 +24,6 @@
     }
   }
 
-  // ---------- Retro hit counter (real, shared count via a free public counter API) ----------
-  var hitCounterEl = document.getElementById('hitCounter');
-  if (hitCounterEl) {
-    fetch('https://countapi.mileshilliard.com/api/v1/hit/ericrangel-dev.portfolio-visits')
-      .then(function(res){ return res.ok ? res.json() : null; })
-      .then(function(data){
-        if (data && typeof data.value === 'number') {
-          hitCounterEl.textContent = String(data.value).padStart(6, '0');
-        }
-      })
-      .catch(function(){
-        // Counter API unreachable — leave the default digits.
-      });
-  }
-
   // ---------- Ticker: seamless loop at any screen width ----------
   // The CSS loop slides the track left by half its width, so each half
   // must be at least as wide as the screen or a blank gap scrolls in.
@@ -149,49 +134,6 @@
         clearTimeout(toastTimer);
         toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2600);
       }
-    });
-  })();
-
-  // ---------- System diagnostic readout (local browser info only) ----------
-  (function sysDiagReadout(){
-    var list = document.getElementById('sysDiag');
-    if (!list) return;
-
-    function detectBrowser(ua){
-      var m;
-      if (/Edg\//.test(ua)) { m = ua.match(/Edg\/([\d.]+)/); return 'Edge ' + (m ? m[1].split('.')[0] : ''); }
-      if (/Chrome\//.test(ua) && !/Chromium/.test(ua)) { m = ua.match(/Chrome\/([\d.]+)/); return 'Chrome ' + (m ? m[1].split('.')[0] : ''); }
-      if (/Firefox\//.test(ua)) { m = ua.match(/Firefox\/([\d.]+)/); return 'Firefox ' + (m ? m[1].split('.')[0] : ''); }
-      if (/Safari\//.test(ua) && /Version\//.test(ua)) { m = ua.match(/Version\/([\d.]+)/); return 'Safari ' + (m ? m[1].split('.')[0] : ''); }
-      return 'Unknown';
-    }
-
-    var rows = [
-      ['DISPLAY', screen.width + '×' + screen.height + ' @ ' + screen.colorDepth + '-bit'],
-      ['VIEWPORT', window.innerWidth + '×' + window.innerHeight],
-      ['BROWSER', detectBrowser(navigator.userAgent)],
-      ['PLATFORM', navigator.platform || 'Unknown'],
-      ['CORES', navigator.hardwareConcurrency ? String(navigator.hardwareConcurrency) : '—'],
-      ['LANGUAGE', navigator.language || 'Unknown'],
-      ['CONNECTION', navigator.onLine ? 'ONLINE' : 'OFFLINE'],
-      ['LOCAL TIME', '']
-    ];
-
-    list.innerHTML = rows.map(function(r){
-      return '<dt>' + r[0] + '</dt><dd data-key="' + r[0] + '">' + r[1] + '</dd>';
-    }).join('');
-
-    var timeCell = list.querySelector('[data-key="LOCAL TIME"]');
-    function tickClock(){
-      if (!timeCell) return;
-      timeCell.textContent = new Date().toLocaleTimeString();
-    }
-    tickClock();
-    setInterval(tickClock, 1000);
-
-    window.addEventListener('resize', function(){
-      var vpCell = list.querySelector('[data-key="VIEWPORT"]');
-      if (vpCell) vpCell.textContent = window.innerWidth + '×' + window.innerHeight;
     });
   })();
 
@@ -493,6 +435,40 @@
       setTimeout(tick, 60000 - (now.getSeconds() * 1000 + now.getMilliseconds()) + 50);
     };
     tick();
+  }
+
+  // ---------- Sign-off "Restart": CRT power-off, back to the top, replay the start-up ----------
+  var signoff = document.querySelector('.signoff');
+  if (signoff && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function(entries){
+      signoff.classList.toggle('is-offscreen', !entries[0].isIntersecting);
+    }).observe(signoff);
+  }
+  var powerOff = document.getElementById('powerOff');
+  if (powerOff) {
+    powerOff.addEventListener('click', function(){
+      var root = document.documentElement;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        window.scrollTo(0, 0);
+        return;
+      }
+      root.classList.add('is-shutting-down');
+      setTimeout(function(){
+        root.style.scrollBehavior = 'auto';
+        window.scrollTo(0, 0);
+        root.style.scrollBehavior = '';
+        // Replay the CRT turn-on: a fresh copy of the boot overlay restarts its animation
+        var boot = document.getElementById('bootScreen');
+        if (boot) {
+          var fresh = boot.cloneNode(true);
+          fresh.classList.remove('hide');
+          fresh.style.display = 'block';
+          boot.parentNode.replaceChild(fresh, boot);
+          setTimeout(function(){ fresh.style.display = 'none'; }, 950);
+        }
+        root.classList.remove('is-shutting-down');
+      }, 520);
+    });
   }
 
 })();
