@@ -75,8 +75,10 @@
   --btn-shadow-ambient: rgba(0,0,0,.3);
   --legacy-badge-bg: repeating-linear-gradient(135deg, #1c1c1c 0 8px, #101010 8px 16px);
 
-  --font-display: 'Chakra Petch', 'Arial Narrow', sans-serif;
-  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Segoe UI was Vista's interface font. Open Sans (same designer) is
+     the web fallback where Segoe UI isn't installed (Mac, phones). */
+  --font-display: 'Segoe UI', 'Open Sans', system-ui, -apple-system, sans-serif;
+  --font-body:    'Segoe UI', 'Open Sans', system-ui, -apple-system, sans-serif;
   --font-mono:    'Consolas', 'Courier New', monospace;
 
   --max-w: 980px;
@@ -147,7 +149,7 @@ body{
 }
 img{ max-width:100%; display:block; }
 a{ color: var(--text-cyan); text-decoration:none; }
-h1,h2,h3,h4{ font-family: var(--font-display); color: var(--paper); margin:0; letter-spacing: .03em; }
+h1,h2,h3,h4{ font-family: var(--font-display); color: var(--paper); margin:0; letter-spacing: .01em; }
 p{ margin: 0 0 1em; }
 ul{ margin:0; padding:0; list-style:none; }
 button, input, textarea{ font-family: inherit; }
@@ -571,17 +573,6 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
   to  { opacity:1; scale: 1; }
 }
 
-/* Timeline: the line draws downward, and each dot lights up as its
-   entry opens. Only hidden once JS is known to be running. */
-.timeline::before{ transform-origin: top; transition: transform 1.4s cubic-bezier(.4,0,.2,1); }
-.js .timeline:not(.is-visible)::before{ transform: scaleY(0); }
-.tl-item.is-visible::before{ animation: dotLight .7s ease-out both; animation-delay: calc(var(--reveal-delay, 0s) + .2s); }
-@keyframes dotLight{
-  0%  { scale: .3; opacity: 0; }
-  60% { scale: 1.25; opacity: 1; }
-  100%{ scale: 1; }
-}
-
 /* Title bars catch a sweep of light when you hover a window */
 .panel-bar::after{
   content:""; position:absolute; inset:0; pointer-events:none;
@@ -990,31 +981,25 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
 .hero-frame{ position:relative; z-index:1; }
 .hero-frame .frame-body{ padding: 40px 34px; }
 
-.eyebrow{
-  display:inline-flex; align-items:center; gap:.6em;
-  font-family: var(--font-display); font-size:.7rem; letter-spacing:.18em;
-  color: var(--text-cyan);
-  padding: 6px 16px; margin-bottom: 22px;
-  background: var(--cyan-deep); /* border layer — the fill sits on ::after, inset by 1px */
-  position:relative; isolation:isolate;
-  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-}
-.eyebrow::after{
-  content:"";
-  position:absolute; inset:1px; z-index:-1;
-  background: linear-gradient(var(--cyan-tint), var(--cyan-tint)), var(--bg-panel);
-  clip-path: polygon(9px 0, 100% 0, calc(100% - 9px) 100%, 0 100%);
+/* Status pill: the same glass as the chips, with a pulsing green
+   "available" light. */
+.hero .eyebrow{
+  display:inline-flex; align-items:center; gap:.65em;
+  margin-bottom: 22px;
+  padding: 6px 14px 6px 11px;
+  font-family: var(--font-mono); font-size:.72rem; letter-spacing:.12em;
 }
 .eyebrow .dot{
-  width:7px; height:7px; border-radius:50%; background: var(--cyan-deep);
-  box-shadow: 0 0 5px 1px var(--cyan);
+  width:8px; height:8px; border-radius:50%; flex:none;
+  background: var(--mint-deep);
+  box-shadow: 0 0 6px 1px var(--mint);
   animation: pulseDot 1.8s ease-in-out infinite;
 }
 @keyframes pulseDot{ 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
 
 .hero h1{
-  font-size: clamp(2.3rem, 6.2vw, 4.1rem);
-  font-weight: 900;
+  font-size: clamp(2.4rem, 6.3vw, 4.2rem);
+  font-weight: 600; letter-spacing: 0;
   line-height: 1.03;
   background: var(--hero-h1-grad);
   -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -1032,76 +1017,129 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
 
 .hero-actions{ display:flex; flex-wrap:wrap; gap:16px; }
 
-/* ---- Taskbar: a strip of dark glass docked to the bottom of the hero
-   window, one button per project. Hovering a button glows it in that
-   project's accent and pops up a preview of the project, like Vista's
-   taskbar thumbnails. */
+/* ---- Taskbar: a Vista taskbar docked to the bottom of the hero window.
+   Black glass bar; a Start-style orb (showing the ER
+   monogram) that overhangs the bar and jumps to the projects;
+   one equal-width glass program button per project, with a screenshot
+   preview on hover; and a recessed notification tray with the visitor's
+   local time and date. Only `transform`/`opacity` animate. */
 .taskbar{
   position: relative;
-  display:flex; align-items:center; gap: 4px;
+  display:flex; align-items:center; gap: 6px;
   margin: 34px -34px -40px;
-  padding: 6px 10px;
+  min-height: 42px;
+  padding: 0 0 0 8px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.14) 0, rgba(255,255,255,.04) 48%, rgba(255,255,255,0) 50%),
-    repeating-linear-gradient(125deg, rgba(255,255,255,.035) 0 2px, transparent 2px 6px),
-    linear-gradient(180deg, #34383c, #131517);
+    linear-gradient(180deg, rgba(255,255,255,.17) 0, rgba(255,255,255,.07) 50%, rgba(255,255,255,0) 51%),
+    linear-gradient(180deg, #303336, #08090a);
   border-top: 1px solid #000;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.14);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.3);
 }
-.taskbar::before{
-  content:"~/projects"; flex:none;
-  font-family: var(--font-mono); font-size:.68rem; letter-spacing:.04em;
-  color: rgba(255,255,255,.45);
-  padding: 0 10px 0 4px; margin-right: 4px;
-  border-right: 1px solid rgba(255,255,255,.12);
-  align-self: stretch; display:flex; align-items:center;
+
+/* The orb */
+.tb-orb{
+  position: relative; flex:none;
+  width: 46px; height: 46px; margin: -8px 10px -6px 0;
+  border-radius: 50%;
+  border: 1px solid #000;
+  isolation: isolate;
+  background: radial-gradient(circle at 50% 65%, #1b2a33, #05080a 70%);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.15), 0 2px 8px rgba(0,0,0,.6), 0 0 14px -2px rgba(111,224,255,.55);
+  transition: box-shadow .3s ease, transform .3s ease;
 }
+.tb-orb{ display:flex; align-items:center; justify-content:center; }
+.tb-orb::before{ /* deep cyan glass core, glowing up from the bottom */
+  content:""; position:absolute; inset: 2px; border-radius: 50%; z-index:-1;
+  background: radial-gradient(circle at 50% 78%, #6fe0ff 0, #2fb8e0 22%, #0d5f7c 52%, #06151c 80%);
+}
+/* The ER monogram sits under the orb's glass reflection */
+.tb-orb-mark{
+  font-family: var(--font-display); font-weight: 700; font-size: .86rem; letter-spacing: .02em;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.7), 0 0 8px rgba(111,224,255,.8);
+}
+.tb-orb::after{ /* glass: dark rim, bright top reflection, soft bottom glow */
+  content:""; position:absolute; inset:0; border-radius: 50%;
+  background:
+    radial-gradient(ellipse 70% 42% at 50% 18%, rgba(255,255,255,.85), rgba(255,255,255,.15) 60%, transparent 72%),
+    radial-gradient(circle at 50% 60%, transparent 38%, rgba(0,0,0,.55) 74%);
+}
+.tb-orb:hover, .tb-orb:focus-visible{
+  transform: scale(1.08);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.25), 0 2px 8px rgba(0,0,0,.6), 0 0 22px 2px rgba(111,224,255,.7);
+}
+
+/* Program buttons */
 .task{
   --accent: var(--cyan-deep); --accent-glow: var(--cyan);
   position: relative;
   display:flex; align-items:center; gap: 8px;
-  min-width: 0; flex: 0 1 auto;
-  padding: 5px 12px 5px 5px;
-  border: 1px solid transparent; border-radius: 4px;
-  color: #ececec; font-size: .8rem; font-weight: 600; line-height: 1.2;
-  text-shadow: 0 1px 2px rgba(0,0,0,.8);
-  transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+  min-width: 0; flex: 0 1 152px;
+  height: 32px; padding: 0 10px 0 5px;
+  border: 1px solid rgba(0,0,0,.9); border-radius: 3px;
+  color: #f2f2f2; font-size: .8rem; font-weight: 400; line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0,0,0,.9);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.17) 0, rgba(255,255,255,.06) 50%, rgba(255,255,255,.01) 51%, rgba(255,255,255,.05) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
+  transition: background .2s ease, box-shadow .2s ease;
 }
 .task.t-amber{ --accent: var(--amber-deep); --accent-glow: var(--amber); }
 .task.t-mint { --accent: var(--mint-deep);  --accent-glow: var(--mint); }
 .task.t-rose { --accent: var(--rose-deep);  --accent-glow: var(--rose); }
+/* Hover: the glass brightens and picks up a glow in the project's color */
 .task:hover, .task:focus-visible{
-  border-color: rgba(255,255,255,.28);
   background:
-    linear-gradient(180deg, rgba(255,255,255,.22) 0, rgba(255,255,255,.06) 48%, rgba(255,255,255,0) 50%),
-    radial-gradient(ellipse 80% 90% at 50% 120%, color-mix(in srgb, var(--accent-glow) 55%, transparent), transparent 70%);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 0 14px -3px var(--accent-glow);
-}
+    linear-gradient(180deg, rgba(255,255,255,.3) 0, rgba(255,255,255,.12) 50%, rgba(255,255,255,.04) 51%, rgba(255,255,255,.08) 100%),
+    radial-gradient(ellipse 90% 110% at 50% 130%, color-mix(in srgb, var(--accent-glow) 55%, transparent), transparent 72%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), 0 0 12px -3px var(--accent-glow);
+}/* The gem: glossy glass in the project's color */
 .task-ico{
-  flex:none; width: 26px; height: 26px;
+  flex:none; width: 22px; height: 22px;
   display:flex; align-items:center; justify-content:center;
-  border: 1px solid #000; border-radius: 5px;
-  font-family: var(--font-display); font-weight:700; font-size:.6rem; letter-spacing:.04em;
-  color: var(--accent-glow);
-  text-shadow: 0 0 3px color-mix(in srgb, var(--accent-glow) 45%, transparent);
+  border: 1px solid rgba(0,0,0,.85); border-radius: 5px;
+  font-family: var(--font-display); font-weight:700; font-size:.54rem; letter-spacing:.02em;
+  color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.7);
   background:
-    linear-gradient(180deg, rgba(255,255,255,.22) 0, rgba(255,255,255,.05) 48%, rgba(255,255,255,0) 50%),
-    radial-gradient(ellipse 80% 55% at 50% 110%, color-mix(in srgb, var(--accent-glow) 30%, transparent), transparent 70%),
-    linear-gradient(180deg, #3a3a3a, #141414);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+    linear-gradient(180deg, rgba(255,255,255,.6) 0, rgba(255,255,255,.14) 46%, rgba(255,255,255,0) 50%),
+    radial-gradient(ellipse 80% 60% at 50% 115%, color-mix(in srgb, var(--accent-glow) 90%, #fff), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #fff), color-mix(in srgb, var(--accent) 65%, #000));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), 0 0 10px -2px var(--accent-glow);
+  transition: transform .25s cubic-bezier(.3,1.4,.5,1);
 }
+.task:hover .task-ico, .task:focus-visible .task-ico{ transform: scale(1.1); }
 .task-name{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* Tray: the visitor's local time */
+.tb-tray{
+  margin-left: auto; flex:none; align-self: stretch;
+  display:flex; align-items:center; gap: 10px;
+  padding: 0 14px 0 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.45));
+  border-left: 1px solid rgba(0,0,0,.9);
+  box-shadow: inset 1px 0 0 rgba(255,255,255,.12);
+  color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.9);
+}
+.tb-clock{
+  display:flex; flex-direction:column; align-items:center;
+  font-family: var(--font-body); font-size: .72rem; line-height: 1.25;
+}
+.tb-tray .tb-dot{
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--mint-deep); box-shadow: 0 0 6px 1px var(--mint);
+  animation: pulseDot 1.8s ease-in-out infinite;
+}
 
 /* The preview window that pops up above a hovered taskbar button */
 .task-peek{
-  position:absolute; left:50%; bottom: calc(100% + 12px); z-index: 5;
+  position:absolute; left:50%; bottom: calc(100% + 14px); z-index: 5;
   width: 250px; padding: 6px 6px 7px;
   border: 1px solid #050505; border-radius: 7px;
   background:
     linear-gradient(180deg, rgba(255,255,255,.16) 0, rgba(255,255,255,.04) 12%, rgba(255,255,255,0) 13%),
     radial-gradient(ellipse 80% 40% at 50% 105%, color-mix(in srgb, var(--accent-glow) 25%, transparent), transparent 70%),
     linear-gradient(180deg, #3a3e42, #16181a);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 10px 28px rgba(0,0,0,.45);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 10px 28px rgba(0,0,0,.45), 0 0 18px -6px var(--accent-glow);
   opacity: 0; translate: -50% 8px; scale: .94; transform-origin: 50% 100%;
   pointer-events: none;
   transition: opacity .18s ease, translate .22s cubic-bezier(.2,.8,.2,1), scale .22s cubic-bezier(.2,.8,.2,1);
@@ -1124,13 +1162,15 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
   text-shadow: none; white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
 }
 
-@media (max-width: 780px){
-  .taskbar::before{ display:none; }
-  .task{ flex: 1 1 0; justify-content:center; padding: 5px; }
+@media (max-width: 860px){
+  .task{ flex: 1 1 0; justify-content:center; padding: 0 5px; }
   .task-name{ display:none; }
 }
 @media (max-width: 480px){
-  .taskbar{ margin: 26px -20px -24px; padding: 6px; }
+  .taskbar{ margin: 26px -20px -24px; padding: 0 6px; gap: 3px; }
+  .tb-orb{ width: 38px; height: 38px; margin: -6px 4px -4px 0; }
+  .tb-tray{ display:none; }
+  .task-ico{ width: 28px; height: 28px; }
 }
 /* Touch screens have no hover, so the previews never show there */
 @media (hover: none){ .task-peek{ display:none; } }
@@ -1282,8 +1322,8 @@ section{ padding: 64px 0; position: relative; }
 }
 .section-tag .path-root{ color: var(--text-amber); }
 .section-title{
-  font-size: clamp(1.5rem, 3.6vw, 2.1rem);
-  font-weight:800; letter-spacing:.04em;
+  font-size: clamp(1.6rem, 3.7vw, 2.25rem);
+  font-weight:600; letter-spacing:0;
 }
 
 /* ============================================================
@@ -1330,7 +1370,7 @@ section{ padding: 64px 0; position: relative; }
    each with a status light in its window's accent color (inherited
    from the .frame's --accent). The lights brighten when the card is
    hovered. */
-.badge{
+.badge, .tag, .eyebrow{
   --chip-hi: #3c3c3c; --chip-lo: #1c1c1c;
   --chip-brush: rgba(255,255,255,.045);
   --chip-gloss: rgba(255,255,255,.12);
@@ -1349,7 +1389,7 @@ section{ padding: 64px 0; position: relative; }
     linear-gradient(180deg, var(--chip-hi), var(--chip-lo));
   box-shadow: inset 0 0 0 1px var(--chip-ring), 0 1px 2px rgba(0,0,0,.25);
 }
-:root[data-theme="light"] .badge{
+:root[data-theme="light"] :is(.badge, .tag, .eyebrow){
   --chip-hi: #ffffff; --chip-lo: #dcdcdc;
   --chip-brush: rgba(255,255,255,.55);
   --chip-gloss: rgba(255,255,255,.8);
@@ -1357,7 +1397,7 @@ section{ padding: 64px 0; position: relative; }
   --chip-ring: rgba(255,255,255,.9);
   box-shadow: inset 0 0 0 1px var(--chip-ring), 0 1px 2px rgba(27,35,44,.12);
 }
-.badge::before{
+.badge::before, .tag::before{
   content:""; flex:none;
   width:6px; height:6px; border-radius:50%;
   background: var(--accent, var(--cyan-deep));
@@ -1365,7 +1405,7 @@ section{ padding: 64px 0; position: relative; }
   opacity: .8;
   transition: box-shadow .3s ease, opacity .3s ease;
 }
-.frame:hover .badge::before{
+.frame:hover :is(.badge, .tag)::before{
   opacity: 1;
   box-shadow: 0 0 6px 1px var(--accent-glow, var(--cyan));
 }
@@ -1386,41 +1426,167 @@ section{ padding: 64px 0; position: relative; }
 /* ============================================================
    EXPERIENCE / EDUCATION TIMELINE
    ============================================================ */
-.timeline{
-  position: relative;
-  padding-left: 34px;
+/* ============================================================
+   EXPERIENCE — a Vista Explorer window. Folders on the left filter
+   the file list; selecting a row shows its full entry in the details
+   pane along the bottom.
+   ============================================================ */
+.explorer{
+  --sel-bg: linear-gradient(180deg, rgba(111,224,255,.22), rgba(47,184,224,.14));
+  --sel-border: rgba(111,224,255,.55);
+  --hover-bg: rgba(111,224,255,.07);
+  --pane-bg: var(--bg-panel-2);
 }
-.timeline::before{
-  content:""; position:absolute; left:6px; top:6px; bottom:6px; width:2px;
-  background: linear-gradient(180deg, var(--cyan-deep), var(--amber-deep), var(--cyan-deep));
+:root[data-theme="light"] .explorer{
+  --sel-bg: linear-gradient(180deg, #e8f5fd, #cfe8f8);
+  --sel-border: #84bfe0;
+  --hover-bg: #f1f8fd;
+  --pane-bg: linear-gradient(180deg, #f7f9fb, #eef2f6);
 }
-.tl-item{
-  position: relative;
-  padding: 0 0 38px 26px;
+.ex-body{ padding: 0; display:flex; flex-direction:column; }
+
+/* Address bar */
+.ex-address{
+  display:flex; align-items:center; gap: 8px; flex-wrap: wrap;
+  margin: 10px 12px; padding: 6px 12px;
+  font-size: .82rem; color: var(--paper-dim);
+  background: var(--bg-inset);
+  border: 1px solid var(--line-strong);
+  border-top-color: color-mix(in srgb, var(--line-strong) 70%, #000);
+  border-radius: 4px;
+  box-shadow: inset 0 1px 3px var(--input-shadow);
 }
-.tl-item:last-child{ padding-bottom:0; }
-.tl-item::before{
-  content:""; position:absolute; left:-34px; top:4px;
-  width:14px; height:14px; border-radius:50%;
-  background: var(--bg-panel);
-  border: 3px solid var(--cyan-deep);
-  box-shadow: 0 0 0 4px var(--cyan-tint), 0 0 8px rgba(111,224,255,.35);
+:root[data-theme="light"] .ex-address{ background: linear-gradient(180deg, #f6f7f8, #fff 40%); border-color: #b9c0c7; border-top-color: #8e979f; }
+.ex-sep{ color: var(--paper-faint); font-size: .7rem; }
+.ex-current{ color: var(--paper); font-weight: 600; }
+
+/* Folder sidebar + file list */
+.ex-main{
+  display:grid; grid-template-columns: 190px 1fr;
+  border-top: 1px solid var(--line);
 }
-.tl-item.is-edu::before{ border-color: var(--amber-deep); box-shadow: 0 0 0 4px var(--amber-tint), 0 0 8px rgba(255,178,62,.35); }
-.tl-meta{
-  font-family: var(--font-display); font-size:.68rem; letter-spacing:.14em;
-  color: var(--paper-faint); text-transform:uppercase; margin-bottom: 6px;
+.ex-nav{
+  display:flex; flex-direction:column; gap: 2px;
+  padding: 12px 8px;
+  background: var(--pane-bg);
+  border-right: 1px solid var(--line);
 }
-.tl-item h3{ font-size: 1.08rem; margin-bottom: 2px; color: var(--paper); }
-.tl-org{ color: var(--text-cyan); font-weight:700; font-size:.92rem; margin-bottom: 12px; display:block; }
-.tl-item.is-edu .tl-org{ color: var(--text-amber); }
-.tl-item ul{ margin-top: 10px; }
-.tl-item li{
-  position:relative; padding-left: 18px; margin-bottom: 8px;
-  color: var(--paper-dim); font-size:.93rem;
+.ex-nav-head{
+  padding: 0 10px 6px;
+  font-family: var(--font-mono); font-size: .68rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--paper-faint);
 }
-.tl-item li::before{
-  content:"+"; position:absolute; left:0; color: var(--text-amber); font-weight:700;
+.ex-folder{
+  display:flex; align-items:center; gap: 9px;
+  padding: 7px 10px;
+  font: 600 .86rem var(--font-body); text-align: left;
+  color: var(--paper);
+  background: none; border: 1px solid transparent; border-radius: 4px;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.ex-folder:hover{ background: var(--hover-bg); }
+.ex-folder[aria-pressed="true"]{ background: var(--sel-bg); border-color: var(--sel-border); }
+.ex-count{
+  margin-left: auto;
+  font-family: var(--font-mono); font-size: .72rem; color: var(--paper-faint);
+}
+/* A small glass folder tab in the category color */
+.ex-folder-ico{
+  --c: var(--cyan-deep);
+  position: relative; flex:none; width: 18px; height: 13px; margin-top: 2px;
+  border-radius: 2px 3px 3px 3px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.55) 0, rgba(255,255,255,.1) 50%, rgba(255,255,255,0) 51%),
+    var(--c);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
+}
+.ex-folder-ico::before{
+  content:""; position:absolute; left:0; top:-3px; width: 8px; height: 4px;
+  border-radius: 2px 2px 0 0; background: var(--c);
+}
+.c-all{ --c: #8a9aa8; }
+.c-work{ --c: var(--cyan-deep); }
+.c-edu{ --c: var(--amber-deep); }
+.c-course{ --c: var(--mint-deep); }
+
+.ex-list{ padding: 4px 8px 10px; min-width: 0; }
+.ex-cols, .ex-row{
+  display:grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.3fr) minmax(0, .9fr);
+  align-items:center; column-gap: 14px;
+}
+.ex-cols{
+  padding: 7px 12px 6px;
+  font-size: .76rem; color: var(--paper-faint);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
+}
+.ex-cols span + span{ border-left: 1px solid var(--line); padding-left: 12px; margin-left: -12px; }
+.ex-row{
+  width: 100%; padding: 8px 12px;
+  font: 400 .88rem var(--font-body); text-align: left;
+  color: var(--paper);
+  background: none; border: 1px solid transparent; border-radius: 4px;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.ex-row:hover{ background: var(--hover-bg); }
+.ex-row[aria-pressed="true"]{ background: var(--sel-bg); border-color: var(--sel-border); }
+.ex-row[hidden]{ display:none; }
+.ex-name{ display:flex; align-items:center; gap: 10px; font-weight: 600; min-width: 0; }
+.ex-org, .ex-date{ color: var(--paper-dim); min-width: 0; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ex-date{ font-family: var(--font-mono); font-size: .78rem; }
+
+/* Item icons: glossy tiles like the contact and taskbar icons */
+.ex-ico{
+  flex:none; width: 26px; height: 26px;
+  display:flex; align-items:center; justify-content:center;
+  border: 1px solid #000; border-radius: 5px;
+  font: 700 .6rem var(--font-display); letter-spacing: .04em;
+  color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.6);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.4) 0, rgba(255,255,255,.08) 48%, rgba(255,255,255,0) 50%),
+    linear-gradient(180deg, color-mix(in srgb, var(--c) 85%, #fff), color-mix(in srgb, var(--c) 70%, #000));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+}
+.ex-ico-lg{ width: 54px; height: 54px; border-radius: 9px; font-size: 1.05rem; }
+
+/* Details pane */
+.ex-details{
+  border-top: 1px solid var(--line);
+  background: var(--pane-bg);
+  padding: 20px 24px 22px;
+}
+.ex-detail{
+  display:grid; grid-template-columns: auto 1fr; column-gap: 18px; row-gap: 14px;
+}
+.ex-detail + .ex-detail{ margin-top: 26px; padding-top: 22px; border-top: 1px dashed var(--line); }
+/* With JS, only the selected entry shows */
+.js .ex-detail{ display:none; }
+.js .ex-detail.is-active{ display:grid; animation: riseIn .35s ease both; }
+.js .ex-detail + .ex-detail{ margin-top: 0; padding-top: 0; border-top: 0; }
+.ex-detail h3{ font-size: 1.3rem; font-weight: 600; letter-spacing: 0; margin-bottom: 6px; }
+.ex-props{ display:flex; flex-wrap: wrap; gap: 4px 22px; margin: 0; font-size: .82rem; }
+.ex-props div{ display:flex; gap: 6px; }
+.ex-props dt{ color: var(--paper-faint); }
+.ex-props dd{ margin: 0; color: var(--paper); font-weight: 600; }
+.ex-bullets{ grid-column: 1 / -1; margin: 0; }
+.ex-bullets li{
+  position: relative; padding-left: 18px; margin-bottom: 8px;
+  color: var(--paper-dim); font-size: .93rem;
+}
+.ex-bullets li::before{ content:"+"; position:absolute; left:0; color: var(--text-amber); font-weight:700; }
+
+@media (max-width: 760px){
+  .ex-main{ grid-template-columns: 1fr; }
+  .ex-nav{ flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); padding: 8px; }
+  .ex-nav-head{ display:none; }
+  .ex-folder{ padding: 6px 10px; }
+  .ex-cols{ display:none; }
+  .ex-cols, .ex-row{ grid-template-columns: 1fr auto; }
+  .ex-org{ display:none; }
+  .ex-details{ padding: 18px 16px; }
+  .ex-ico-lg{ width: 42px; height: 42px; font-size: .85rem; }
 }
 
 /* ============================================================
@@ -1431,19 +1597,18 @@ section{ padding: 64px 0; position: relative; }
 }
 .skill-card .frame-body{ padding: 20px 22px; }
 .tag-row{ display:flex; flex-wrap:wrap; gap:9px; align-content:flex-start; }
+/* Skill tags use the same glass chip as the project badges (above),
+   just larger and in the body font. */
 .tag{
-  font-size:.82rem; font-weight:600;
-  padding: 7px 14px;
-  color: var(--paper);
-  background: var(--bg-panel-2);
-  border: 1px solid var(--line-strong);
-  transition: border-color .2s ease, color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease;
+  padding: 7px 13px 7px 11px;
+  font-family: var(--font-body); font-size:.84rem; font-weight:600; letter-spacing:0;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
+.tag::before{ width:7px; height:7px; }
 .tag:hover{
-  color: var(--text-cyan); border-color: var(--cyan-deep);
-  background: var(--cyan-tint);
-  box-shadow: 0 3px 8px var(--btn-shadow-ambient);
   transform: translateY(-2px);
+  border-color: var(--accent, var(--cyan-deep));
+  box-shadow: inset 0 0 0 1px var(--chip-ring), 0 4px 10px var(--btn-shadow-ambient), 0 0 10px -3px var(--accent-glow, var(--cyan));
 }
 
 @media (max-width: 780px){
@@ -1460,21 +1625,33 @@ section{ padding: 64px 0; position: relative; }
 .contact-form .frame-body{ padding: 26px; }
 .field{ margin-bottom: 20px; }
 .field label{
-  display:block; font-family: var(--font-display); font-size:.68rem;
-  letter-spacing:.14em; text-transform:uppercase; color: var(--paper-faint); margin-bottom: 8px;
+  display:block; margin-bottom: 7px;
+  font-family: var(--font-mono); font-size:.74rem; letter-spacing:.06em;
+  text-transform:uppercase; color: var(--paper-faint);
+  transition: color .2s ease;
 }
+.field:focus-within label{ color: var(--text-cyan); }
+/* Vista-style text boxes: a slightly darker top edge, a soft inner
+   shadow, and a cyan glow when focused. */
 .field input, .field textarea{
-  width:100%; padding: 12px 14px;
+  width:100%; padding: 11px 13px;
+  color: var(--paper);
   background: var(--bg-inset);
   border: 1px solid var(--line-strong);
-  color: var(--paper);
-  box-shadow: inset 0 2px 4px var(--input-shadow);
-  transition: border-color .2s ease, box-shadow .2s ease;
+  border-top-color: color-mix(in srgb, var(--line-strong) 70%, #000);
+  border-radius: 4px;
+  box-shadow: inset 0 1px 3px var(--input-shadow);
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
 }
+:root[data-theme="light"] .field input, :root[data-theme="light"] .field textarea{
+  background: linear-gradient(180deg, #f6f7f8, #ffffff 40%);
+  border-color: #b9c0c7; border-top-color: #8e979f;
+}
+.field input:hover, .field textarea:hover{ border-color: color-mix(in srgb, var(--cyan-deep) 45%, var(--line-strong)); }
 .field input:focus, .field textarea:focus{
-  border-color: var(--cyan-deep);
-  box-shadow: inset 0 2px 4px var(--input-shadow), 0 0 0 3px var(--cyan-tint);
   outline: none;
+  border-color: var(--cyan-deep);
+  box-shadow: inset 0 1px 3px var(--input-shadow), 0 0 0 3px var(--cyan-tint), 0 0 10px -2px rgba(111,224,255,.55);
 }
 .field textarea{ resize: vertical; min-height: 110px; }
 .form-status{ margin-top: 14px; font-size:.85rem; font-weight:700; min-height: 1.2em; }
@@ -1663,8 +1840,8 @@ footer .foot-mark{
 .page-hero{ padding: 52px 0 20px; }
 .page-hero .section-tag{ margin-bottom: 10px; }
 .page-hero h1{
-  font-size: clamp(1.9rem, 5vw, 2.9rem);
-  font-weight: 900; letter-spacing: .02em;
+  font-size: clamp(1.95rem, 5vw, 3rem);
+  font-weight: 600; letter-spacing: 0;
   background: var(--hero-h1-grad);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   margin-bottom: 10px;

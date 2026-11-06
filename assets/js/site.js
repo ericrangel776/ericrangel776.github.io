@@ -442,4 +442,57 @@
     }
   }
 
+  // ---------- Experience Explorer window ----------
+  // Folders filter the file list; selecting a row shows its entry in the
+  // details pane. Arrow keys move the selection while a row has focus.
+  var explorer = document.querySelector('.explorer');
+  if (explorer) {
+    var exRows = Array.prototype.slice.call(explorer.querySelectorAll('.ex-row'));
+    var exFolders = Array.prototype.slice.call(explorer.querySelectorAll('.ex-folder'));
+    var exCrumb = document.getElementById('exCrumb');
+
+    var exSelect = function(row){
+      exRows.forEach(function(r){ r.setAttribute('aria-pressed', r === row ? 'true' : 'false'); });
+      explorer.querySelectorAll('.ex-detail').forEach(function(d){
+        d.classList.toggle('is-active', row && d.id === row.getAttribute('data-target'));
+      });
+    };
+    var exVisible = function(){ return exRows.filter(function(r){ return !r.hidden; }); };
+    var exFilter = function(folder){
+      var cat = folder.getAttribute('data-filter');
+      exFolders.forEach(function(f){ f.setAttribute('aria-pressed', f === folder ? 'true' : 'false'); });
+      exRows.forEach(function(r){ r.hidden = cat !== 'all' && r.getAttribute('data-cat') !== cat; });
+      if (exCrumb) exCrumb.textContent = folder.childNodes[1].textContent.trim();
+      var current = exRows.filter(function(r){ return r.getAttribute('aria-pressed') === 'true' && !r.hidden; })[0];
+      exSelect(current || exVisible()[0]);
+    };
+
+    exRows.forEach(function(r){
+      r.addEventListener('click', function(){ exSelect(r); });
+      r.addEventListener('keydown', function(e){
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        var vis = exVisible(), i = vis.indexOf(r);
+        var next = vis[i + (e.key === 'ArrowDown' ? 1 : -1)];
+        if (next) { e.preventDefault(); next.focus(); exSelect(next); }
+      });
+    });
+    exFolders.forEach(function(f){ f.addEventListener('click', function(){ exFilter(f); }); });
+    exFilter(exFolders[0]);
+  }
+
+  // ---------- Taskbar tray clock: the visitor's local time ----------
+  var tbClock = document.getElementById('tbClock');
+  if (tbClock) {
+    var tick = function(){
+      var now = new Date();
+      tbClock.textContent = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      tbClock.setAttribute('datetime', now.toISOString());
+      var tbDate = document.getElementById('tbDate');
+      if (tbDate) tbDate.textContent = now.toLocaleDateString();
+      // Wake again right at the next minute, not on a busy interval
+      setTimeout(tick, 60000 - (now.getSeconds() * 1000 + now.getMilliseconds()) + 50);
+    };
+    tick();
+  }
+
 })();

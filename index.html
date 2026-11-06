@@ -68,10 +68,10 @@
 }
 </script>
 
-<!-- Google Fonts: Chakra Petch (angular techno display, echoes the cut-corner UI) + Inter (readable body) -->
+<!-- Google Fonts: Open Sans, the web fallback for Segoe UI (Vista's interface font) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/css/site.css">
 
@@ -188,6 +188,7 @@
           </div>
           <!-- Taskbar: one button per project; hovering shows a preview of it -->
           <nav class="taskbar" aria-label="Projects">
+            <a class="tb-orb" href="#projects" aria-label="All projects"><span class="tb-orb-mark" aria-hidden="true">ER</span></a>
             <a class="task t-rose" href="project-study-pet.html">
               <span class="task-ico" aria-hidden="true">SP</span>
               <span class="task-name">Study Pet</span>
@@ -233,6 +234,7 @@
                 <span class="peek-sub">Vanilla JS &middot; live forecast API</span>
               </span>
             </a>
+            <span class="tb-tray" aria-hidden="true"><span class="tb-dot"></span><span class="tb-clock"><time id="tbClock"></time><span id="tbDate"></span></span></span>
           </nav>
         </div>
       </div>
@@ -405,51 +407,113 @@
         <div class="reveal-bar"></div>
       </div>
 
-      <div class="timeline reveal">
-
-        <div class="tl-item reveal-item">
-          <div class="tl-meta">Jan 2026 - Present</div>
-          <h3>AI Implementation Intern</h3>
-          <span class="tl-org">Datatelligent, Glen Ellyn, IL</span>
-          <ul>
-            <li>Gathered requirements and ran AI use-case discovery with the sales and delivery teams through stakeholder interviews and brainstorms; ranked automation opportunities in a value/effort prioritization workbook for the Growth team.</li>
-            <li>Built and maintain a library of 17 Claude skills and plugins used in client work, including a versioned slide-deck plugin (v2.1), six meeting-notes and briefing skills over Fathom transcripts, and a skill-auditing agent that caught real client data in sample files before sharing; cut one skill's runtime from ~4 to ~1.5 min.</li>
-            <li>Automated recurring reports with human-in-the-loop agent workflows: a HubSpot pipeline-report skill that drafts reports for human review before sending, and a PDF-to-Excel pipeline that extracted thousands of enrollment rows, with an agent validating the script's output (it caught a column the script missed).</li>
-            <li>Built a browser-agent pipeline (Claude in Chrome) that pulls accreditation signals for ~1,000 higher-ed institutions and automatically matches them to IPEDS data; proved it on a 15-20-signal pilot, then turned a manual review into a ~30-minute rerunnable workflow delivering Excel lead lists.</li>
-            <li>Led company AI rollouts: wrote the proposal that launched the Claude Team plan (approved the same day) and onboarded the first ~11 users; took an AI notetaker (Fathom) from vendor trial to 21 shared client-meeting recordings per week through one-on-one coaching.</li>
-            <li>Planned and reported the AI initiative to the CEO through a project plan, tracker and 20+ weekly reports flagging risks and decisions; wrote 20+ guides, integration security audits (HubSpot, Slack, Microsoft 365) and a hands-on Claude workshop with a facilitator guide.</li>
-          </ul>
+      <!-- Explorer window: folders on the left filter the list; picking a
+           row shows its full entry in the details pane below. Without JS,
+           every entry's details simply show in full. -->
+      <div class="frame explorer reveal-item">
+        <div class="panel-bar"><span>EXPERIENCE.DIR</span><span class="led" aria-hidden="true"></span></div>
+        <div class="frame-body ex-body">
+          <div class="ex-address" aria-hidden="true">
+            <span class="ex-crumb">Eric Rangel</span><span class="ex-sep">&#9656;</span><span class="ex-crumb">Experience</span><span class="ex-sep">&#9656;</span><span class="ex-crumb ex-current" id="exCrumb">All items</span>
+          </div>
+          <div class="ex-main">
+            <nav class="ex-nav" aria-label="Filter experience and education">
+              <span class="ex-nav-head" aria-hidden="true">Folders</span>
+              <button class="ex-folder" type="button" data-filter="all"><span class="ex-folder-ico c-all" aria-hidden="true"></span>All items<span class="ex-count">4</span></button>
+              <button class="ex-folder" type="button" data-filter="work"><span class="ex-folder-ico c-work" aria-hidden="true"></span>Work<span class="ex-count">2</span></button>
+              <button class="ex-folder" type="button" data-filter="edu"><span class="ex-folder-ico c-edu" aria-hidden="true"></span>Education<span class="ex-count">1</span></button>
+              <button class="ex-folder" type="button" data-filter="course"><span class="ex-folder-ico c-course" aria-hidden="true"></span>Coursework<span class="ex-count">1</span></button>
+            </nav>
+            <div class="ex-list" aria-label="Entries">
+              <div class="ex-cols" aria-hidden="true"><span>Name</span><span>Organization</span><span>Date</span></div>
+              <button class="ex-row" type="button" data-cat="work" data-target="ex-datatelligent" aria-controls="ex-datatelligent">
+                <span class="ex-name"><span class="ex-ico c-work" aria-hidden="true">DT</span>AI Implementation Intern</span>
+                <span class="ex-org">Datatelligent</span>
+                <span class="ex-date">Jan 2026 - Present</span>
+              </button>
+              <button class="ex-row" type="button" data-cat="work" data-target="ex-library" aria-controls="ex-library">
+                <span class="ex-name"><span class="ex-ico c-work" aria-hidden="true">NR</span>Circulation Clerk &amp; Tech Expert</span>
+                <span class="ex-org">North Riverside Public Library</span>
+                <span class="ex-date">Jan 2024 - Jan 2026</span>
+              </button>
+              <button class="ex-row" type="button" data-cat="course" data-target="ex-deeplearning" aria-controls="ex-deeplearning">
+                <span class="ex-name"><span class="ex-ico c-course" aria-hidden="true">DL</span>AI Coursework</span>
+                <span class="ex-org">DeepLearning.AI</span>
+                <span class="ex-date">2026</span>
+              </button>
+              <button class="ex-row" type="button" data-cat="edu" data-target="ex-dominican" aria-controls="ex-dominican">
+                <span class="ex-name"><span class="ex-ico c-edu" aria-hidden="true">DU</span>B.S. Computer Science</span>
+                <span class="ex-org">Dominican University</span>
+                <span class="ex-date">Expected May 2027</span>
+              </button>
+            </div>
+          </div>
+          <div class="ex-details" aria-live="polite">
+          <article class="ex-detail" id="ex-datatelligent" data-cat="work">
+            <span class="ex-ico ex-ico-lg c-work" aria-hidden="true">DT</span>
+            <div class="ex-detail-head">
+              <h3>AI Implementation Intern</h3>
+              <dl class="ex-props">
+                <div><dt>Organization</dt><dd>Datatelligent, Glen Ellyn, IL</dd></div>
+                <div><dt>Date</dt><dd>Jan 2026 - Present</dd></div>
+                <div><dt>Type</dt><dd>Work</dd></div>
+              </dl>
+            </div>
+            <ul class="ex-bullets">
+              <li>Gathered requirements and ran AI use-case discovery with the sales and delivery teams through stakeholder interviews and brainstorms; ranked automation opportunities in a value/effort prioritization workbook for the Growth team.</li>
+              <li>Built and maintain a library of 17 Claude skills and plugins used in client work, including a versioned slide-deck plugin (v2.1), six meeting-notes and briefing skills over Fathom transcripts, and a skill-auditing agent that caught real client data in sample files before sharing; cut one skill's runtime from ~4 to ~1.5 min.</li>
+              <li>Automated recurring reports with human-in-the-loop agent workflows: a HubSpot pipeline-report skill that drafts reports for human review before sending, and a PDF-to-Excel pipeline that extracted thousands of enrollment rows, with an agent validating the script's output (it caught a column the script missed).</li>
+              <li>Built a browser-agent pipeline (Claude in Chrome) that pulls accreditation signals for ~1,000 higher-ed institutions and automatically matches them to IPEDS data; proved it on a 15-20-signal pilot, then turned a manual review into a ~30-minute rerunnable workflow delivering Excel lead lists.</li>
+              <li>Led company AI rollouts: wrote the proposal that launched the Claude Team plan (approved the same day) and onboarded the first ~11 users; took an AI notetaker (Fathom) from vendor trial to 21 shared client-meeting recordings per week through one-on-one coaching.</li>
+              <li>Planned and reported the AI initiative to the CEO through a project plan, tracker and 20+ weekly reports flagging risks and decisions; wrote 20+ guides, integration security audits (HubSpot, Slack, Microsoft 365) and a hands-on Claude workshop with a facilitator guide.</li>
+            </ul>
+          </article>
+          <article class="ex-detail" id="ex-library" data-cat="work">
+            <span class="ex-ico ex-ico-lg c-work" aria-hidden="true">NR</span>
+            <div class="ex-detail-head">
+              <h3>Circulation Clerk &amp; Tech Expert</h3>
+              <dl class="ex-props">
+                <div><dt>Organization</dt><dd>North Riverside Public Library, North Riverside, IL</dd></div>
+                <div><dt>Date</dt><dd>Jan 2024 - Jan 2026</dd></div>
+                <div><dt>Type</dt><dd>Work</dd></div>
+              </dl>
+            </div>
+            <ul class="ex-bullets">
+              <li>Troubleshot patron hardware and software issues as the branch's tech go-to, and used the SWAN consortium system for circulation and patron account tasks.</li>
+            </ul>
+          </article>
+          <article class="ex-detail" id="ex-deeplearning" data-cat="course">
+            <span class="ex-ico ex-ico-lg c-course" aria-hidden="true">DL</span>
+            <div class="ex-detail-head">
+              <h3>AI Coursework</h3>
+              <dl class="ex-props">
+                <div><dt>Organization</dt><dd>DeepLearning.AI</dd></div>
+                <div><dt>Date</dt><dd>2026</dd></div>
+                <div><dt>Type</dt><dd>Coursework</dd></div>
+              </dl>
+            </div>
+            <ul class="ex-bullets">
+              <li>LangChain for LLM Apps, Production RAG, LLMOps, and Automated Testing for LLMs.</li>
+              <li>Hands-on with LangGraph, LlamaIndex, Pinecone, and CircleCI as part of the coursework.</li>
+            </ul>
+          </article>
+          <article class="ex-detail" id="ex-dominican" data-cat="edu">
+            <span class="ex-ico ex-ico-lg c-edu" aria-hidden="true">DU</span>
+            <div class="ex-detail-head">
+              <h3>B.S. Computer Science</h3>
+              <dl class="ex-props">
+                <div><dt>Organization</dt><dd>Dominican University, River Forest, IL</dd></div>
+                <div><dt>Date</dt><dd>Expected May 2027</dd></div>
+                <div><dt>Type</dt><dd>Education</dd></div>
+              </dl>
+            </div>
+            <ul class="ex-bullets">
+              <li>GPA: 3.9 / 4.0 · Phi Theta Kappa Honor Society · Highest Level Transfer Merit Scholarship.</li>
+              <li>Relevant coursework: Data Structures, Algorithm Analysis &amp; Design, Database Design, Artificial Intelligence, Operating Systems, Data Science.</li>
+            </ul>
+          </article>
+          </div>
         </div>
-
-        <div class="tl-item reveal-item">
-          <div class="tl-meta">Jan 2024 - Jan 2026</div>
-          <h3>Circulation Clerk &amp; Tech Expert</h3>
-          <span class="tl-org">North Riverside Public Library, North Riverside, IL</span>
-          <ul>
-            <li>Troubleshot patron hardware and software issues as the branch's tech go-to, and used the SWAN consortium system for circulation and patron account tasks.</li>
-          </ul>
-        </div>
-
-        <div class="tl-item is-edu reveal-item">
-          <div class="tl-meta">2026</div>
-          <h3>AI Coursework</h3>
-          <span class="tl-org">DeepLearning.AI</span>
-          <ul>
-            <li>LangChain for LLM Apps, Production RAG, LLMOps, and Automated Testing for LLMs.</li>
-            <li>Hands-on with LangGraph, LlamaIndex, Pinecone, and CircleCI as part of the coursework.</li>
-          </ul>
-        </div>
-
-        <div class="tl-item is-edu reveal-item">
-          <div class="tl-meta">Expected May 2027</div>
-          <h3>B.S. Computer Science</h3>
-          <span class="tl-org">Dominican University, River Forest, IL</span>
-          <ul>
-            <li>GPA: 3.9 / 4.0 · Phi Theta Kappa Honor Society · Highest Level Transfer Merit Scholarship.</li>
-            <li>Relevant coursework: Data Structures, Algorithm Analysis &amp; Design, Database Design, Artificial Intelligence, Operating Systems, Data Science.</li>
-          </ul>
-        </div>
-
       </div>
     </div>
   </section>
