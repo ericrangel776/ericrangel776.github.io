@@ -382,73 +382,64 @@
     });
   }
 
-  // ---------- Hero terminal: real commands from real projects ----------
-  // Types a command, prints its result, holds, then moves to the next
-  // project. Every command and number here comes from the project itself
-  // (package.json scripts, script filenames, results on the project cards).
-  var term = document.getElementById('heroTerm');
-  if (term && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    var runs = [
-      { cmd: 'npm test && npm run test:browser', out: '✓ ~150 tests passed · study-pet' },
-      { cmd: 'python watch_ppo.py',              out: '✓ PPO agent · peak 46 pellets / episode' },
-      { cmd: 'dotnet run --project ExpenseTracker', out: '✓ ASP.NET Core 8 · EF Core · SQL Server' }
-    ];
-    var cmdEl = term.querySelector('.t-cmd');
-    var outEl = term.querySelector('.t-out');
-    var i = 0;
-
-    var wait = function(ms){ return new Promise(function(r){ setTimeout(r, ms); }); };
-    var typeOut = function(text){
-      var n = 0;
-      return new Promise(function(done){
-        (function step(){
-          cmdEl.textContent = text.slice(0, ++n);
-          if (n < text.length) setTimeout(step, 38 + Math.random() * 45);
-          else done();
-        })();
-      });
-    };
-    var erase = function(){
-      return new Promise(function(done){
-        (function step(){
-          var t = cmdEl.textContent;
-          if (!t.length) return done();
-          cmdEl.textContent = t.slice(0, -3);
-          setTimeout(step, 18);
-        })();
-      });
-    };
-
-    var cycle = function(){
-      i = (i + 1) % runs.length;
-      term.classList.add('is-typing');
-      return wait(250)
-        .then(erase)
-        .then(function(){ outEl.textContent = runs[i].out; return wait(350); })
-        .then(function(){ return typeOut(runs[i].cmd); })
-        .then(function(){ return wait(420); })
-        .then(function(){ term.classList.remove('is-typing'); return wait(4200); })
-        .then(cycle);
-    };
-    // The first run is already in the markup; hold it, then start cycling.
-    wait(4200).then(cycle);
-  }
-
-  // ---------- Hero glare: a reflection on the window glass that follows the pointer ----------
+  // ---------- Hero pointer effects ----------
+  // Glare: a light disc on the hero window's glass that follows the pointer.
+  // Parallax: the aurora and the hero window shift by different amounts,
+  // so they read as layers at different depths.
+  // Performance: only `transform`/`translate` are written, straight onto
+  // the few elements that move (no inherited CSS variables, so the rest of
+  // the hero is never restyled), at most once per frame, and element
+  // positions are measured on enter/scroll/resize instead of every move.
+  var hero = document.querySelector('.hero');
   var heroFrame = document.querySelector('.hero-frame');
-  if (heroFrame && window.matchMedia('(hover: hover)').matches) {
-    var glareQueued = false, gx = 0, gy = 0;
-    heroFrame.addEventListener('pointermove', function(e){
-      var r = heroFrame.getBoundingClientRect();
-      gx = e.clientX - r.left; gy = e.clientY - r.top;
-      if (glareQueued) return;
-      glareQueued = true;
-      requestAnimationFrame(function(){
-        heroFrame.style.setProperty('--gx', gx + 'px');
-        heroFrame.style.setProperty('--gy', gy + 'px');
-        glareQueued = false;
+  if (hero && heroFrame) {
+    // Pause the hero's looping animations while it's scrolled out of view.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(entries){
+        hero.classList.toggle('is-offscreen', !entries[0].isIntersecting);
+      }).observe(hero);
+    }
+
+    if (window.matchMedia('(hover: hover)').matches &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      var aurora = hero.querySelector('.aurora');
+      var glare = document.createElement('span');
+      glare.className = 'glare';
+      glare.setAttribute('aria-hidden', 'true');
+      var glareDot = document.createElement('span');
+      glareDot.className = 'glare-dot';
+      glare.appendChild(glareDot);
+      heroFrame.insertBefore(glare, heroFrame.firstChild);
+
+      var heroRect = null, frameRect = null, queued = false, px = 0, py = 0, mx = 0, my = 0;
+      var measure = function(){
+        heroRect = hero.getBoundingClientRect();
+        frameRect = heroFrame.getBoundingClientRect();
+      };
+      var invalidate = function(){ heroRect = null; };
+      window.addEventListener('scroll', invalidate, { passive: true });
+      window.addEventListener('resize', invalidate);
+
+      var apply = function(){
+        queued = false;
+        if (!heroRect) measure();
+        px = ((mx - heroRect.left) / heroRect.width) * 2 - 1;
+        py = ((my - heroRect.top) / heroRect.height) * 2 - 1;
+        write(px, py);
+        glareDot.style.transform = 'translate3d(' + (mx - frameRect.left) + 'px,' + (my - frameRect.top) + 'px,0)';
+      };
+      var write = function(x, y){
+        if (aurora) aurora.style.transform = 'translate3d(' + (x * -16).toFixed(1) + 'px,' + (y * -10).toFixed(1) + 'px,0)';
+        heroFrame.style.transform = 'translate3d(' + (x * -5).toFixed(1) + 'px,' + (y * -4).toFixed(1) + 'px,0)';
+      };
+
+      hero.addEventListener('pointerenter', measure);
+      hero.addEventListener('pointermove', function(e){
+        mx = e.clientX; my = e.clientY;
+        if (!queued) { queued = true; requestAnimationFrame(apply); }
       });
-    });
+      hero.addEventListener('pointerleave', function(){ write(0, 0); });
+    }
   }
 
 })();
