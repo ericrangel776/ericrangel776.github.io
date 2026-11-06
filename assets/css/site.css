@@ -381,56 +381,146 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
   z-index: 1;
 }
 
-/* "Window panel" — brushed card with hairline border + soft shadow */
+/* ============================================================
+   WINDOWS — Vista-style window chrome built from the site's own
+   palette: brushed gunmetal (or brushed silver in light mode) glass
+   with a glossy title bar, HUD type, and the window's accent color
+   (cyan by default, or v-amber / v-mint / v-rose on the title bar)
+   carried into the icon, the client-area edge, and the size grip.
+   The glass is painted on .frame itself, so the title bar and the
+   thin borders are one surface. The .led span becomes min/max/close.
+   ============================================================ */
 .frame{
+  --accent:        var(--cyan-deep);
+  --accent-glow:   var(--cyan);
+
+  /* dark theme: brushed gunmetal, same family as the panel bars */
+  --glass-hi:      #3e3e3e;
+  --glass-lo:      #1b1b1b;
+  --glass-brush:   rgba(255,255,255,.045);
+  --glass-sheen:   rgba(255,255,255,.12);
+  --glass-tint:    color-mix(in srgb, var(--accent) 9%, transparent);
+  --glass-outline: #050505;
+  --glass-inner:   rgba(255,255,255,.12);
+  --cap-hi:        #4c4c4c;
+  --cap-lo:        #1e1e1e;
+  --title-glow:    0 1px 2px rgba(0,0,0,.9);
+
   position: relative;
-  border: 1px solid var(--line-strong);
+  display: flex; flex-direction: column;
+  padding: 0 5px 5px;
+  border: 1px solid var(--glass-outline);
+  border-radius: 7px 7px 3px 3px;
+  background:
+    linear-gradient(180deg, var(--glass-sheen) 0, rgba(255,255,255,.03) 14px, rgba(255,255,255,0) 15px) top / 100% 30px no-repeat,
+    repeating-linear-gradient(125deg, var(--glass-brush) 0 2px, transparent 2px 6px),
+    linear-gradient(var(--glass-tint), var(--glass-tint)),
+    linear-gradient(180deg, var(--glass-hi), var(--glass-lo) 60px, var(--glass-lo));
+  box-shadow: var(--frame-shadow), inset 0 0 0 1px var(--glass-inner);
+}
+:root[data-theme="light"] .frame{
+  /* light theme: brushed silver, matching the light navbar */
+  --glass-hi:      #ffffff;
+  --glass-lo:      #c9c9c9;
+  --glass-brush:   rgba(255,255,255,.55);
+  --glass-sheen:   rgba(255,255,255,.8);
+  --glass-tint:    color-mix(in srgb, var(--accent) 7%, transparent);
+  --glass-outline: #8a8a8a;
+  --glass-inner:   rgba(255,255,255,.85);
+  --cap-hi:        #ffffff;
+  --cap-lo:        #c4c4c4;
+  --title-glow:    0 0 2px #fff, 0 0 6px rgba(255,255,255,.9);
+}
+.frame:has(> .panel-bar.v-amber){ --accent: var(--amber-deep); --accent-glow: var(--amber); }
+.frame:has(> .panel-bar.v-mint) { --accent: var(--mint-deep);  --accent-glow: var(--mint); }
+.frame:has(> .panel-bar.v-rose) { --accent: var(--rose-deep);  --accent-glow: var(--rose); }
+
+/* Client area: everything in the window below the title bar.
+   Its top edge picks up the window's accent like a lit seam. */
+.frame > :not(.panel-bar){
+  flex: 1 1 auto; /* fill the window when a grid stretches it */
   background: var(--bg-panel);
-  box-shadow: var(--frame-shadow);
-}
-.frame::before{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  transform: translateZ(0);
-  background-color: var(--frame-scan);
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3'%3E%3Crect width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3'%3E%3Crect width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
-  -webkit-mask-repeat: repeat;
-  mask-repeat: repeat;
-  -webkit-mask-size: 1px 3px;
-  mask-size: 1px 3px;
-}
-/* Resize-grip corner accent — like an old OS window's drag handle */
-.frame::after{
-  content:""; position:absolute; bottom:2px; right:2px; width:12px; height:12px; pointer-events:none;
-  background-image: repeating-linear-gradient(135deg, var(--cyan-deep) 0 1.5px, transparent 1.5px 4px);
-  opacity:.7;
+  border: 1px solid var(--glass-outline);
+  border-top-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--glass-inner), 0 -1px 6px -1px color-mix(in srgb, var(--accent-glow) 55%, transparent);
 }
 
-/* Title bar — angled "cut corner" tag, mimics old-school HUD chrome. Real text (a11y-safe). */
+/* Size grip — Vista's dotted triangle, in the accent color */
+.frame::after{
+  content:""; position:absolute; bottom:8px; right:8px; width:11px; height:11px; pointer-events:none;
+  background-image: radial-gradient(circle, var(--accent) 1px, transparent 1.4px);
+  background-size: 4px 4px;
+  background-position: right bottom;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  opacity:.85;
+}
+
+/* Title bar — transparent, so the frame's glass shows through. Real text (a11y-safe). */
 .panel-bar{
-  display:flex; align-items:center; justify-content:space-between;
-  gap: 10px;
-  padding: 9px 14px 9px 16px;
-  font-family: var(--font-display); font-weight:600; font-size:.68rem;
-  letter-spacing:.12em; text-transform:uppercase;
+  position: relative;
+  display:flex; align-items:center; gap: 8px;
+  min-height: 30px;
+  margin: 0;
+  padding: 6px 98px 5px 4px;
+  font-family: var(--font-display);
+  font-weight: 600; font-size: .68rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  line-height: 1.3;
   color: var(--paper);
-  background: var(--panelbar-bg);
-  border-bottom: 1px solid rgba(0,0,0,.25);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.3);
-  clip-path: polygon(0 0, calc(100% - var(--notch)) 0, 100% var(--notch), 100% 100%, 0 100%);
+  text-shadow: var(--title-glow);
+  background: none;
 }
+/* Window icon — a small glowing accent gem, the old status LED's job */
+.panel-bar::before{
+  content:""; flex: none;
+  width: 10px; height: 10px; border-radius: 2px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.7) 0, rgba(255,255,255,.15) 50%, transparent 51%),
+    var(--accent);
+  border: 1px solid rgba(0,0,0,.45);
+  box-shadow: 0 0 6px 1px color-mix(in srgb, var(--accent-glow) 70%, transparent);
+}
+.panel-bar > span:first-child{
+  min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+
+/* Caption buttons. .led is the close button (in the site's rose);
+   ::before is maximize and ::after is minimize, in brushed chrome,
+   all hanging off the top edge. */
 .panel-bar .led{
-  width:9px; height:9px; border-radius:50%; flex:none;
-  background: var(--cyan-deep);
-  box-shadow: 0 0 5px 1px var(--cyan), inset 0 -1px 1px rgba(0,0,0,.3);
+  --cap-gloss:
+    linear-gradient(180deg, rgba(255,255,255,.45) 0, rgba(255,255,255,.12) 48%, rgba(255,255,255,0) 50%, rgba(255,255,255,.1) 100%);
+  position:absolute; top:0; right:1px;
+  width: 40px; height: 18px;
+  border: 1px solid var(--glass-outline); border-top: 0;
+  border-radius: 0 0 4px 0;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10'%3E%3Cpath d='M2 1.5l8 7M10 1.5l-8 7' stroke='%23400a18' stroke-width='3.4' stroke-linecap='round'/%3E%3Cpath d='M2 1.5l8 7M10 1.5l-8 7' stroke='%23fff' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") center / 12px 10px no-repeat,
+    var(--cap-gloss),
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(255,160,185,.75), transparent 70%),
+    linear-gradient(180deg, var(--rose), var(--rose-deep) 50%, #a92843 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), 0 0 6px rgba(255,111,145,.35);
 }
-.panel-bar.v-amber .led{ background: var(--amber-deep); box-shadow: 0 0 5px 1px var(--amber), inset 0 -1px 1px rgba(0,0,0,.3); }
-.panel-bar.v-mint  .led{ background: var(--mint-deep);  box-shadow: 0 0 5px 1px var(--mint),  inset 0 -1px 1px rgba(0,0,0,.3); }
-.panel-bar.v-rose  .led{ background: var(--rose-deep);  box-shadow: 0 0 5px 1px var(--rose),  inset 0 -1px 1px rgba(0,0,0,.3); }
-.panel-bar{ border-left: 3px solid var(--cyan-deep); }
-.panel-bar.v-amber{ border-left-color: var(--amber-deep); }
-.panel-bar.v-mint{  border-left-color: var(--mint-deep); }
-.panel-bar.v-rose{  border-left-color: var(--rose-deep); }
+.panel-bar .led::before,
+.panel-bar .led::after{
+  content:""; position:absolute; top:0;
+  width: 22px; height: 18px;
+  border: 1px solid var(--glass-outline); border-top:0; border-right:0;
+  box-shadow: inset 0 0 0 1px var(--glass-inner);
+}
+.panel-bar .led::before{ /* maximize */
+  right: calc(100% + 1px);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='9'%3E%3Crect x='1.5' y='1.5' width='8' height='6' fill='none' stroke='%23111' stroke-width='3'/%3E%3Crect x='1.5' y='1.5' width='8' height='6' fill='none' stroke='%23fff' stroke-width='1.2'/%3E%3Crect x='1.5' y='1.5' width='8' height='1.6' fill='%23fff'/%3E%3C/svg%3E") center / 11px 9px no-repeat,
+    var(--cap-gloss), linear-gradient(180deg, var(--cap-hi), var(--cap-lo));
+}
+.panel-bar .led::after{ /* minimize */
+  right: calc(100% + 1px + 22px);
+  border-radius: 0 0 0 4px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='9'%3E%3Crect x='1.5' y='4.5' width='8' height='3' fill='%23fff' stroke='%23111' stroke-width='1'/%3E%3C/svg%3E") center / 11px 9px no-repeat,
+    var(--cap-gloss), linear-gradient(180deg, var(--cap-hi), var(--cap-lo));
+}
 
 .frame-body{ padding: 26px; position:relative; }
 
@@ -465,29 +555,81 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
   display:flex; align-items:center; justify-content:space-between;
   height: 64px;
 }
+/* Brand — a glossy Aero "app icon" tile beside the name in chrome
+   lettering, with a small live status line underneath. */
 .brand{
-  display:flex; align-items:center; gap:.6em;
+  display:flex; align-items:center; gap:.75em;
+  margin-right: 20px; flex:none;
   font-family: var(--font-display); font-weight:700;
-  color: var(--paper); letter-spacing:.1em; font-size: 1.05rem;
-  transition: color .35s ease;
+  color: var(--paper);
 }
 .brand .brand-mark{
-  display:inline-flex; align-items:center; justify-content:center;
-  width:34px; height:34px;
-  background: var(--brandmark-border); /* border layer — the fill sits on ::after, inset by 1px */
-  color: var(--brandmark-color); font-weight:900; font-size:.85rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,.35);
-  position:relative; isolation:isolate;
-  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%);
-  transition: background .35s ease, color .35s ease;
+  display:inline-flex; align-items:center; justify-content:center; flex:none;
+  width:36px; height:36px;
+  border: 1px solid #050505;
+  border-radius: 7px;
+  color: var(--brandmark-color); font-weight:700; font-size:.9rem; letter-spacing:.04em;
+  text-shadow: 0 1px 0 rgba(255,255,255,.35);
+  background:
+    /* gloss: bright top half with a hard edge at the midline */
+    linear-gradient(180deg, rgba(255,255,255,.55) 0, rgba(255,255,255,.12) 48%, rgba(255,255,255,0) 50%),
+    /* faint cyan light pool along the bottom */
+    radial-gradient(ellipse 80% 55% at 50% 110%, rgba(111,224,255,.35), transparent 70%),
+    var(--brandmark-bg);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.35),
+    0 2px 6px rgba(0,0,0,.35);
+  position:relative; overflow:hidden; isolation:isolate;
+  transition: box-shadow .35s ease, transform .25s ease;
 }
+:root[data-theme="light"] .brand .brand-mark{
+  border-color:#000;
+  text-shadow: 0 1px 2px rgba(0,0,0,.8);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14), 0 2px 6px rgba(27,35,44,.25);
+}
+/* Lit cyan seam along the bottom of the tile */
 .brand .brand-mark::after{
-  content:"";
-  position:absolute; inset:1px; z-index:-1;
-  background: var(--brandmark-bg);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.4), inset 0 -2px 3px rgba(0,0,0,.35);
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
-  transition: background .35s ease;
+  content:""; position:absolute; left:6px; right:6px; bottom:3px; height:2px; border-radius:1px;
+  background: var(--cyan);
+  box-shadow: 0 0 6px 1px rgba(111,224,255,.7);
+  opacity:.85;
+}
+/* Light sweep across the tile on hover */
+.brand .brand-mark::before{
+  content:""; position:absolute; top:0; bottom:0; width:45%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+  left:-70%; transform: skewX(-20deg);
+  transition: left .6s ease;
+}
+.brand:hover .brand-mark::before{ left:140%; }
+.brand:hover .brand-mark{
+  transform: translateY(-1px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.35), 0 2px 6px rgba(0,0,0,.35), 0 0 12px 1px rgba(111,224,255,.35);
+}
+
+.brand-text{ display:flex; flex-direction:column; line-height:1.05; }
+.brand-name{
+  font-size: 1.08rem; letter-spacing:.12em;
+  background: var(--hero-h1-grad);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.brand-sub{
+  display:flex; align-items:center; gap:6px;
+  margin-top: 4px;
+  font-family: var(--font-mono); font-weight:400; font-size:.6rem;
+  letter-spacing:.16em; text-transform:uppercase;
+  color: var(--text-cyan);
+}
+/* Pulsing "online" dot, same as the hero eyebrow */
+.brand-sub::before{
+  content:""; width:5px; height:5px; border-radius:50%; flex:none;
+  background: var(--cyan-deep);
+  box-shadow: 0 0 4px 1px var(--cyan);
+  animation: pulseDot 1.8s ease-in-out infinite;
+}
+@media (max-width: 480px){
+  .brand-sub{ display:none; }
+  .brand-name{ font-size: 1rem; }
 }
 
 .nav-right{ display:flex; align-items:center; gap:14px; }
@@ -643,48 +785,149 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
 @keyframes tickerScroll{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
 
 /* ============================================================
-   BUTTONS — glossy chrome / cyan outline, angled cut corner
+   BUTTONS — Aero glass, to match the windows.
+   .btn-chrome: a cyan glass "orb" button with a hard gloss line,
+     a pool of light along the bottom, and Vista's slow pulsing
+     glow on hover.
+   .btn-ghost: a slab of the same brushed glass as the window
+     frames, with a lit accent seam and HUD corner brackets that
+     open outward on hover.
+   Both get a light sweep across the face on hover.
    ============================================================ */
 .btn{
-  display:inline-flex; align-items:center; gap:.5em;
+  /* dark theme glass (ghost button) */
+  --btn-glass-hi:  #3e3e3e;
+  --btn-glass-lo:  #1b1b1b;
+  --btn-brush:     rgba(255,255,255,.045);
+  --btn-gloss:     rgba(255,255,255,.13);
+  --btn-outline:   #050505;
+  --btn-ring:      rgba(255,255,255,.12);
+
+  display:inline-flex; align-items:center; justify-content:center; gap:.5em;
+  min-height: 46px;
+  padding: 12px 26px;
   font-family: var(--font-display); font-weight:700; font-size:.78rem;
-  letter-spacing:.12em; text-transform:uppercase;
-  padding: 14px 26px;
+  letter-spacing:.14em; text-transform:uppercase;
+  line-height: 1.2;
   cursor:pointer;
-  background: var(--line-strong); /* border layer — the fill sits on ::after, inset by 1px */
+  border: 1px solid var(--btn-outline);
+  border-radius: 5px;
   position: relative; overflow:hidden; isolation:isolate;
-  transition: transform .18s ease, box-shadow .25s ease;
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+  transition: transform .18s ease, box-shadow .3s ease, color .3s ease;
 }
-.btn::after{
-  content:"";
-  position:absolute; inset:1px; z-index:-1;
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%);
+:root[data-theme="light"] .btn{
+  --btn-glass-hi:  #ffffff;
+  --btn-glass-lo:  #cdcdcd;
+  --btn-brush:     rgba(255,255,255,.55);
+  --btn-gloss:     rgba(255,255,255,.75);
+  --btn-outline:   #8a8a8a;
+  --btn-ring:      rgba(255,255,255,.85);
 }
-.btn-chrome{
-  color:#101010;
-  box-shadow: 0 3px 10px var(--btn-shadow-ambient);
-}
-.btn-chrome::after{
-  background: linear-gradient(180deg, #ffffff 0%, #e8e8e8 35%, #c8c8c8 65%, #ababab 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 -2px 3px rgba(0,0,0,.15);
-}
-.btn-chrome:hover{ box-shadow: 0 3px 10px var(--btn-shadow-ambient), 0 0 0 3px var(--cyan-tint); transform: translateY(-2px); }
-.btn-ghost{
-  color: var(--text-cyan);
-  background: var(--cyan-deep);
-}
-.btn-ghost::after{ background: linear-gradient(rgba(111,224,255,.05), rgba(111,224,255,.05)), var(--bg-panel); }
-.btn-ghost:hover::after{ background: linear-gradient(var(--cyan-tint), var(--cyan-tint)), var(--bg-panel); }
-.btn-ghost:hover{ box-shadow: 0 3px 10px var(--btn-shadow-ambient); transform: translateY(-2px); }
+
+/* Light sweep across the face on hover */
 .btn::before{
-  content:""; position:absolute; top:0; bottom:0; width:40%;
-  background: linear-gradient(100deg, transparent, rgba(255,255,255,.6), transparent);
+  content:""; position:absolute; top:0; bottom:0; width:40%; z-index:2;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent);
   left:-60%; transform: skewX(-20deg);
-  transition: left .55s ease;
+  transition: left .6s ease;
+  pointer-events:none;
 }
 .btn:hover::before{ left:130%; }
+.btn:hover{ transform: translateY(-2px); }
 .btn:active{ transform: translateY(0) scale(.98); }
+
+/* ---- Primary: chrome Aero glass ----
+   Bright silver on the dark theme, dark gunmetal on the light theme
+   (the same inversion as the brand mark). Cyan only shows as a faint
+   glow along the bottom and in the hover pulse. */
+.btn-chrome{
+  --orb-hi:   #f7f7f7;
+  --orb-mid:  #d4d4d4;
+  --orb-low:  #b4b4b4;
+  --orb-base: #c6c6c6;
+  --orb-pool: rgba(111,224,255,.28);
+  color:#101010;
+  text-shadow: 0 1px 0 rgba(255,255,255,.6);
+  border-color: #050505;
+  background:
+    /* gloss: bright top half with a hard edge at the midline */
+    linear-gradient(180deg, rgba(255,255,255,.5) 0, rgba(255,255,255,.12) 48%, rgba(255,255,255,0) 50%) top / 100% 100% no-repeat,
+    /* soft light pool along the bottom edge */
+    radial-gradient(ellipse 75% 60% at 50% 115%, var(--orb-pool), transparent 70%),
+    linear-gradient(180deg, var(--orb-hi) 0, var(--orb-mid) 50%, var(--orb-low) 51%, var(--orb-base) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.45),
+    0 3px 10px var(--btn-shadow-ambient);
+}
+:root[data-theme="light"] .btn-chrome{
+  --orb-hi:   #4e4e4e;
+  --orb-mid:  #2c2c2c;
+  --orb-low:  #151515;
+  --orb-base: #222222;
+  --orb-pool: rgba(111,224,255,.22);
+  color: #f5f5f5;
+  text-shadow: 0 1px 2px rgba(0,0,0,.8);
+  border-color: #000;
+}
+:root[data-theme="light"] .btn-chrome{ box-shadow: inset 0 0 0 1px rgba(255,255,255,.14), 0 3px 10px var(--btn-shadow-ambient); }
+.btn-chrome:hover{
+  animation: aeroPulse 1.6s ease-in-out infinite alternate;
+}
+.btn-chrome:active{
+  animation: none;
+  filter: brightness(.92);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.35), 0 1px 4px var(--btn-shadow-ambient);
+}
+@keyframes aeroPulse{
+  from{ box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), 0 5px 14px var(--btn-shadow-ambient), 0 0 4px 0 rgba(111,224,255,.15); }
+  to  { box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), 0 5px 14px var(--btn-shadow-ambient), 0 0 12px 1px rgba(111,224,255,.35); }
+}
+
+/* ---- Secondary: brushed glass slab with HUD brackets ---- */
+.btn-ghost{
+  color: var(--text-cyan);
+  text-shadow: none;
+  background:
+    linear-gradient(180deg, var(--btn-gloss) 0, rgba(255,255,255,.03) 49%, rgba(255,255,255,0) 50%),
+    repeating-linear-gradient(125deg, var(--btn-brush) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, var(--btn-glass-hi), var(--btn-glass-lo));
+  box-shadow:
+    inset 0 0 0 1px var(--btn-ring),
+    inset 0 -1px 0 var(--cyan-deep),
+    0 3px 10px var(--btn-shadow-ambient);
+}
+/* Corner brackets, drawn as eight thin bars */
+.btn-ghost::after{
+  --b: var(--cyan-deep);
+  content:""; position:absolute; inset:5px; z-index:1; pointer-events:none;
+  background:
+    linear-gradient(var(--b), var(--b)) left top    / 8px 1.5px no-repeat,
+    linear-gradient(var(--b), var(--b)) left top    / 1.5px 8px no-repeat,
+    linear-gradient(var(--b), var(--b)) right top   / 8px 1.5px no-repeat,
+    linear-gradient(var(--b), var(--b)) right top   / 1.5px 8px no-repeat,
+    linear-gradient(var(--b), var(--b)) left bottom / 8px 1.5px no-repeat,
+    linear-gradient(var(--b), var(--b)) left bottom / 1.5px 8px no-repeat,
+    linear-gradient(var(--b), var(--b)) right bottom/ 8px 1.5px no-repeat,
+    linear-gradient(var(--b), var(--b)) right bottom/ 1.5px 8px no-repeat;
+  opacity:.4;
+  transition: inset .25s ease, opacity .25s ease;
+}
+.btn-ghost:hover::after{ inset:3px; opacity:.8; }
+.btn-ghost:hover{
+  background:
+    linear-gradient(180deg, var(--btn-gloss) 0, rgba(255,255,255,.03) 49%, rgba(255,255,255,0) 50%),
+    linear-gradient(rgba(111,224,255,.06), rgba(111,224,255,.06)),
+    repeating-linear-gradient(125deg, var(--btn-brush) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, var(--btn-glass-hi), var(--btn-glass-lo));
+  box-shadow:
+    inset 0 0 0 1px var(--btn-ring),
+    inset 0 -2px 0 var(--cyan-deep),
+    0 5px 14px var(--btn-shadow-ambient),
+    0 4px 10px -4px rgba(111,224,255,.3);
+}
+.btn-ghost:active{
+  box-shadow: inset 0 0 0 1px var(--btn-ring), inset 0 -2px 0 var(--cyan-deep), inset 0 2px 4px rgba(0,0,0,.3);
+}
 
 /* ============================================================
    HERO
@@ -737,13 +980,29 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
 }
 .terminal-line{
   font-family: var(--font-mono);
-  color: var(--text-mint); font-size: .9rem;
+  color: var(--paper); font-size: .86rem;
   margin: 20px 0 28px;
   background: var(--bg-inset);
   border: 1px solid var(--line-strong);
-  display:inline-block;
-  padding: 8px 12px;
+  border-left: 2px solid var(--mint-deep);
+  border-radius: 4px;
+  display:inline-flex; flex-wrap:wrap; align-items:center;
+  row-gap: 4px;
+  padding: 9px 14px;
+  min-width: min(100%, 25em);
+  max-width: 100%;
 }
+.terminal-line .t-prompt{ color: var(--text-mint); margin-right: .6em; }
+.terminal-line .t-cmd{ white-space: pre; }
+/* Output sits after the cursor: a real terminal prints it once the
+   command finishes, so it fades in after typing completes. */
+.terminal-line .t-out{
+  flex-basis: 100%;
+  color: var(--paper-faint);
+  transition: opacity .35s ease;
+}
+.terminal-line .t-out::first-letter{ color: var(--text-mint); }
+.terminal-line.is-typing .t-out{ opacity: 0; }
 .cursor-blink{
   display:inline-block; width:8px; height:1em; background: var(--text-mint);
   margin-left:2px; vertical-align: -1px;
@@ -773,12 +1032,13 @@ section{ padding: 64px 0; position: relative; }
   transition: background-color .35s ease, color .35s ease;
 }
 .section-head{ margin-bottom: 36px; }
+/* Section tags read as paths: ~/about, ~/projects/study-pet, ... */
 .section-tag{
-  font-family: var(--font-display); font-size:.7rem; letter-spacing:.24em;
-  color: var(--paper-faint); text-transform:uppercase; margin-bottom: 8px;
+  font-family: var(--font-mono); font-size:.78rem; letter-spacing:.04em;
+  color: var(--paper-faint); margin-bottom: 8px;
   transition: color .35s ease;
 }
-.section-tag::before{ content:"+ "; color: var(--text-amber); }
+.section-tag .path-root{ color: var(--text-amber); }
 .section-title{
   font-size: clamp(1.5rem, 3.6vw, 2.1rem);
   font-weight:800; letter-spacing:.04em;
@@ -925,7 +1185,7 @@ section{ padding: 64px 0; position: relative; }
    ============================================================ */
 .contact-grid{
   display:grid; grid-template-columns: 1fr 1fr; gap: 26px;
-  align-items: start;
+  align-items: stretch; /* both windows end on the same line */
 }
 .contact-form .frame-body{ padding: 26px; }
 .field{ margin-bottom: 20px; }
@@ -947,33 +1207,113 @@ section{ padding: 64px 0; position: relative; }
   outline: none;
 }
 .field textarea{ resize: vertical; min-height: 110px; }
-.form-note{ font-size:.78rem; color: var(--paper-faint); margin-top: 14px; }
 .form-status{ margin-top: 14px; font-size:.85rem; font-weight:700; min-height: 1.2em; }
+.form-status:empty{ display:none; } /* no reserved gap until there is a message */
 .form-status.ok{ color: var(--text-mint); }
 .form-status.err{ color: var(--rose-deep); }
 
-.contact-links .frame-body{ padding: 22px; display:flex; flex-direction:column; gap: 14px; }
+.contact-links .frame-body{ padding: 22px; display:flex; flex-direction:column; justify-content:space-between; gap: 12px; }
+
+/* Contact rows — glass list items. Each link carries its own accent
+   (LinkedIn cyan, email amber, GitHub mint) into a lit left edge,
+   a glowing symbol on a dark glass icon tile, and the hover arrow. */
 .social-link{
-  display:flex; align-items:center; gap: 14px;
-  padding: 14px 16px;
+  --accent:      var(--cyan-deep);
+  --accent-glow: var(--cyan);
+  --accent-text: var(--text-cyan);
+  display:flex; align-items:center; gap: 16px;
+  padding: 18px 44px 18px 16px;
   border: 1px solid var(--line-strong);
-  background: var(--bg-panel-2);
+  border-left: 3px solid var(--accent);
+  border-radius: 5px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06) 0, rgba(255,255,255,0) 50%),
+    var(--bg-panel-2);
   color: var(--paper);
-  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease, background .2s ease;
+  position: relative; overflow: hidden; isolation: isolate;
+  transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease, background .25s ease;
 }
-.social-link:hover{ border-color: var(--cyan-deep); background: var(--cyan-tint); transform: translateX(4px); }
+:root[data-theme="light"] .social-link{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.9) 0, rgba(255,255,255,0) 50%),
+    var(--bg-panel-2);
+}
+.social-link[href^="mailto:"]{ --accent: var(--amber-deep); --accent-glow: var(--amber); --accent-text: var(--text-amber); }
+.social-link[href*="github"]  { --accent: var(--mint-deep);  --accent-glow: var(--mint);  --accent-text: var(--text-mint); }
+.social-link[href$=".pdf"]    { --accent: var(--rose-deep);  --accent-glow: var(--rose);  --accent-text: var(--rose-deep); }
+.social-link .ico{ letter-spacing:.02em; }
+.social-link[href$=".pdf"] .ico{ font-size:.66rem; }
+
+.social-link:hover{
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--line-strong));
+  border-left-color: var(--accent);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%),
+    linear-gradient(180deg, rgba(255,255,255,.06) 0, rgba(255,255,255,0) 50%),
+    var(--bg-panel-2);
+  box-shadow: -4px 0 14px -6px var(--accent-glow);
+  transform: translateX(4px);
+}
+
+/* Light sweep across the row on hover */
+.social-link::before{
+  content:""; position:absolute; top:0; bottom:0; width:30%; z-index:-1;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.18), transparent);
+  left:-40%; transform: skewX(-20deg);
+  transition: left .7s ease;
+  pointer-events:none;
+}
+.social-link:hover::before{ left:120%; }
+
+/* Arrow that slides in from the right on hover */
+.social-link::after{
+  content:"\203A";
+  position:absolute; right:18px; top:50%;
+  font-family: var(--font-display); font-size: 1.6rem; line-height:1;
+  color: var(--accent-text);
+  transform: translate(-8px, -55%); opacity: 0;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.social-link:hover::after{ transform: translate(0, -55%); opacity: 1; }
+
+/* Icon tile — dark Aero glass in both themes, glyph lit in the accent */
 .social-link .ico{
-  width: 36px; height:36px; flex:none;
+  width: 40px; height: 40px; flex:none;
   display:flex; align-items:center; justify-content:center;
-  background: linear-gradient(160deg, var(--chrome-hi), var(--chrome-low));
-  color:#101010; font-family: var(--font-display); font-weight:800; font-size:.8rem;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 -2px 3px rgba(0,0,0,.2);
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  border: 1px solid #000;
+  border-radius: 7px;
+  font-family: var(--font-display); font-weight:700; font-size:.85rem;
+  color: var(--accent-glow);
+  text-shadow: 0 0 3px color-mix(in srgb, var(--accent-glow) 45%, transparent);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.22) 0, rgba(255,255,255,.05) 48%, rgba(255,255,255,0) 50%),
+    radial-gradient(ellipse 80% 55% at 50% 110%, color-mix(in srgb, var(--accent-glow) 30%, transparent), transparent 70%),
+    linear-gradient(180deg, #3a3a3a, #141414);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 2px 5px rgba(0,0,0,.3);
+  transition: box-shadow .25s ease;
 }
-.social-link .label{ font-family: var(--font-display); font-size:.72rem; letter-spacing:.08em; color: var(--paper-faint); text-transform:uppercase; display:block; }
-.social-link .value{ font-weight:700; color: var(--paper); font-size:.94rem; }
-.social-link.primary{ border-color: var(--cyan-deep); }
-.social-link.primary .ico{ background: linear-gradient(160deg, #d9f4ff, var(--cyan-deep)); }
+.social-link:hover .ico{
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 2px 5px rgba(0,0,0,.3), 0 0 10px color-mix(in srgb, var(--accent-glow) 45%, transparent);
+}
+
+.social-link .label{
+  display:flex; align-items:center; gap:8px;
+  font-family: var(--font-mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  color: var(--accent-text);
+  margin-bottom: 2px;
+}
+.social-link .value{ font-weight:700; color: var(--paper); font-size:.94rem; word-break: break-word; }
+
+/* "Preferred" tag on the main contact method */
+.social-link.primary .label::after{
+  content:"Preferred";
+  font-family: var(--font-display); font-size:.56rem; font-weight:700; letter-spacing:.12em;
+  padding: 2px 7px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent-text);
+}
 
 @media (max-width: 780px){
   .contact-grid{ grid-template-columns: 1fr; }
@@ -989,7 +1329,7 @@ footer{
   font-size:.82rem;
 }
 footer .foot-mark{
-  font-family: var(--font-display); letter-spacing:.18em; font-size:.68rem;
+  font-family: var(--font-mono); letter-spacing:.04em; font-size:.74rem;
   color: var(--text-cyan); margin-bottom: 10px;
   transition: color .35s ease;
 }
@@ -1036,11 +1376,7 @@ footer .foot-mark{
    boot screen, regardless of site theme. */
 .sysdiag-frame{
   max-width: 420px; margin: 0 auto 22px; text-align:left;
-  border: 1px solid var(--line-strong);
-  background: #0a0a0a;
-  box-shadow: var(--frame-shadow);
 }
-.sysdiag-frame .panel-bar{ background: var(--panelbar-bg); }
 .sysdiag-body{ padding: 16px 20px; background: #0a0a0a; }
 .sysdiag-grid{
   display:grid; grid-template-columns: auto 1fr; gap: 7px 16px;

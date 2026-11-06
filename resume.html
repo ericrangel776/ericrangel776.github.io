@@ -85,7 +85,9 @@
 @media print{
   .navbar, footer, .boot-screen, .theme-fx, .konami-toast, .bg-fx, .page-hero .back-link, .resume-actions{ display:none !important; }
   body{ background:#fff; color:#000; }
-  .resume-frame{ border:none; box-shadow:none; }
+  .resume-frame{ border:none; box-shadow:none; background:none; padding:0; }
+  .resume-frame::after{ display:none; }
+  .resume-frame > .frame-body{ border:none; box-shadow:none; }
   .resume-frame .panel-bar{ display:none; }
   a{ color:#000; text-decoration: underline; }
 }
@@ -118,7 +120,7 @@
   <div class="navbar-inner">
     <a class="brand" href="index.html#top" aria-label="Eric Rangel — home">
       <span class="brand-mark" aria-hidden="true">ER</span>
-      ERIC&nbsp;RANGEL
+      <span class="brand-text"><span class="brand-name">ERIC&nbsp;RANGEL</span><span class="brand-sub" aria-hidden="true">AI Implementation</span></span>
     </a>
     <div class="nav-right">
       <button id="themeToggle" class="theme-toggle" type="button" data-state="light" aria-pressed="true" aria-label="Switch to dark theme">
@@ -175,7 +177,7 @@
 
   <section class="page-hero">
     <div class="wrap">
-      <div class="section-tag">RÉSUMÉ.DOC</div>
+      <div class="section-tag"><span class="path-root">~/</span>resume</div>
       <h1>Eric Rangel</h1>
       <p class="lead">AI Implementation &amp; Automation: Claude skills, agents, MCP, and Python. The same content as the PDF, in page form so it's linkable, searchable, and prints cleanly.</p>
       <div class="resume-actions">
@@ -320,7 +322,7 @@
 
 <footer>
   <div class="wrap">
-    <div class="foot-mark">// END TRANSMISSION</div>
+    <div class="foot-mark" id="lastUpdated" hidden>last updated <time></time></div>
     <p>&copy; <span id="year"></span> Eric Rangel. Built with HTML, CSS &amp; vanilla JavaScript.</p>
     <div class="foot-links">
       <a href="index.html#top">Home</a><span class="sep">/</span>

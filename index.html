@@ -108,7 +108,7 @@
   <div class="navbar-inner">
     <a class="brand" href="#top" aria-label="Eric Rangel, home">
       <span class="brand-mark" aria-hidden="true">ER</span>
-      ERIC&nbsp;RANGEL
+      <span class="brand-text"><span class="brand-name">ERIC&nbsp;RANGEL</span><span class="brand-sub" aria-hidden="true">AI Implementation</span></span>
     </a>
     <div class="nav-right">
       <button id="themeToggle" class="theme-toggle" type="button" data-state="light" aria-pressed="true" aria-label="Switch to dark theme">
@@ -177,7 +177,8 @@
           <h1>ERIC RANGEL</h1>
           <h2>AI Implementation&nbsp;&amp;&nbsp;Automation</h2>
           <p class="lead">I build Claude skills, agents, and MCP-connected workflows that turn manual work into rerunnable, human-reviewed automation, then help teams actually adopt them.</p>
-          <p class="terminal-line" aria-hidden="true">&gt; loading_portfolio.exe // status: ready<span class="cursor-blink"></span></p>
+          <!-- Real commands from real projects; site.js cycles through them. -->
+          <p class="terminal-line" id="heroTerm" aria-hidden="true"><span class="t-prompt">$</span> <span class="t-cmd">npm test &amp;&amp; npm run test:browser</span><span class="cursor-blink"></span><span class="t-out">&#10003; ~150 tests passed &middot; study-pet</span></p>
           <div class="hero-actions">
             <a class="btn btn-chrome" href="#projects">View My Work ▸</a>
             <a class="btn btn-ghost" href="./Eric%20Rangel%20-%20Resume%202026.pdf" download>Download Résumé ↓</a>
@@ -193,7 +194,7 @@
   <section id="about">
     <div class="wrap">
       <div class="section-head reveal">
-        <div class="section-tag">01 // Dossier</div>
+        <div class="section-tag"><span class="path-root">~/</span>about</div>
         <h2 class="section-title">About Me</h2>
         <div class="reveal-bar"></div>
       </div>
@@ -231,7 +232,7 @@
   <section id="projects">
     <div class="wrap">
       <div class="section-head reveal">
-        <div class="section-tag">02 // Featured Work</div>
+        <div class="section-tag"><span class="path-root">~/</span>projects</div>
         <h2 class="section-title">Projects</h2>
         <div class="reveal-bar"></div>
       </div>
@@ -348,7 +349,7 @@
   <section id="experience">
     <div class="wrap">
       <div class="section-head reveal">
-        <div class="section-tag">03 // Timeline</div>
+        <div class="section-tag"><span class="path-root">~/</span>experience</div>
         <h2 class="section-title">Experience &amp; Education</h2>
         <div class="reveal-bar"></div>
       </div>
@@ -408,7 +409,7 @@
   <section id="skills">
     <div class="wrap">
       <div class="section-head reveal">
-        <div class="section-tag">04 // Capabilities</div>
+        <div class="section-tag"><span class="path-root">~/</span>skills</div>
         <h2 class="section-title">Skills</h2>
         <div class="reveal-bar"></div>
       </div>
@@ -478,7 +479,7 @@
   <section id="contact">
     <div class="wrap">
       <div class="section-head reveal">
-        <div class="section-tag">05 // Get In Touch</div>
+        <div class="section-tag"><span class="path-root">~/</span>contact</div>
         <h2 class="section-title">Contact</h2>
         <div class="reveal-bar"></div>
       </div>
@@ -508,7 +509,6 @@
             </div>
             <button type="submit" class="btn btn-chrome">Transmit Message ▸</button>
             <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
-            <p class="form-note">Sent directly to my inbox, so it reaches a real person, not a demo.</p>
           </div>
         </form>
 
@@ -539,6 +539,14 @@
                 <span class="value">github.com/ericrangel776</span>
               </span>
             </a>
+
+            <a class="social-link" href="./Eric%20Rangel%20-%20Resume%202026.pdf" download>
+              <span class="ico" aria-hidden="true">PDF</span>
+              <span>
+                <span class="label">Résumé</span>
+                <span class="value">Download the PDF</span>
+              </span>
+            </a>
           </div>
         </div>
 
@@ -550,7 +558,7 @@
 
 <footer>
   <div class="wrap">
-    <div class="foot-mark">// END TRANSMISSION</div>
+    <div class="foot-mark" id="lastUpdated" hidden>last updated <time></time></div>
     <p>&copy; <span id="year"></span> Eric Rangel. Built with HTML, CSS &amp; vanilla JavaScript.</p>
 
     <div class="foot-links">
