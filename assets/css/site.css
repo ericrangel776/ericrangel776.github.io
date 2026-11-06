@@ -73,7 +73,6 @@
   --input-shadow: rgba(0,0,0,.4);
   --card-hover-shadow: 0 4px 8px rgba(0,0,0,.3), 0 20px 34px rgba(0,0,0,.45);
   --btn-shadow-ambient: rgba(0,0,0,.3);
-  --legacy-badge-bg: repeating-linear-gradient(135deg, #1c1c1c 0 8px, #101010 8px 16px);
 
   /* Segoe UI was Vista's interface font. Open Sans (same designer) is
      the web fallback where Segoe UI isn't installed (Mac, phones). */
@@ -129,7 +128,6 @@
   --input-shadow: rgba(27,35,44,.06);
   --card-hover-shadow: 0 4px 8px rgba(27,35,44,.08), 0 20px 34px rgba(27,35,44,.16);
   --btn-shadow-ambient: rgba(27,35,44,.2);
-  --legacy-badge-bg: repeating-linear-gradient(135deg, #f2f2f2 0 8px, #e0e0e0 8px 16px);
 }
 
 /* ============================================================
@@ -439,7 +437,8 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
 
 /* Client area: everything in the window below the title bar.
    Its top edge picks up the window's accent like a lit seam. */
-.frame > :not(.panel-bar):not(.glare){
+/* :where() keeps this rule easy to override (e.g. the terminal-dark system info) */
+.frame > :where(:not(.panel-bar):not(.glare)){
   flex: 1 1 auto; /* fill the window when a grid stretches it */
   margin: 0;      /* <dl>/<form> bodies carry browser margins that show as extra glass */
   background: var(--bg-panel);
@@ -1769,68 +1768,125 @@ section{ padding: 64px 0; position: relative; }
 /* ============================================================
    FOOTER
    ============================================================ */
+/* ============================================================
+   SIGN-OFF — the home page's closing note. A glass window over the
+   aurora with a big mail icon, a thank-you, contact buttons and a Restart
+   button that powers the page off like a CRT, returns to the top and
+   replays the start-up.
+   ============================================================ */
+.signoff{ position: relative; overflow: hidden; padding: 70px 0 60px; }
+.signoff .wrap{ position: relative; z-index: 1; }
+.signoff.is-offscreen .aurora > *{ animation-play-state: paused; }
+.signoff-window{ max-width: 760px; margin: 0 auto; }
+.signoff-body{
+  display:grid; grid-template-columns: auto 1fr; gap: 6px 28px; align-items:center;
+  padding: 34px 36px 0;
+}
+/* A big glossy "mail" app tile, pointing at getting in touch */
+.signoff-icon{
+  grid-row: span 2;
+  position: relative; isolation: isolate;
+  width: 100px; height: 100px; border-radius: 22px;
+  display:flex; align-items:center; justify-content:center;
+  color: #fff;
+  border: 1px solid #04212c;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.55) 0, rgba(255,255,255,.14) 46%, rgba(255,255,255,0) 50%),
+    radial-gradient(ellipse 85% 60% at 50% 112%, rgba(160,240,255,.9), transparent 70%),
+    linear-gradient(180deg, #49c8ef, #1683ad 55%, #0d5f7c);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), 0 6px 18px rgba(0,0,0,.35), 0 0 28px -6px rgba(111,224,255,.7);
+}
+.signoff-icon svg{ filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+.signoff h2{ font-size: clamp(1.6rem, 3.6vw, 2.2rem); font-weight: 600; letter-spacing: 0; align-self: end; }
+.signoff-text{ color: var(--paper-dim); margin: 0; align-self: start; max-width: 520px; }
+/* Bottom strip of the window, like a dialog's button row */
+.signoff-actions{
+  grid-column: 1 / -1;
+  display:flex; flex-wrap: wrap; align-items:center; gap: 14px;
+  margin: 26px -36px 0; padding: 16px 36px;
+  border-top: 1px solid var(--line);
+  background: var(--bg-panel-2);
+}
+.signoff-power{
+  margin-left: auto;
+  display:inline-flex; align-items:center; gap: 10px;
+  padding: 4px 4px 4px 12px;
+  font: 600 .84rem var(--font-body); color: var(--paper-dim);
+  background: none; border: 0; cursor: pointer;
+}
+.signoff-power:hover{ color: var(--paper); }
+/* Glossy cyan restart button with a circular arrow */
+.power-btn{
+  position: relative; width: 38px; height: 34px; border-radius: 5px;
+  display:inline-flex; align-items:center; justify-content:center;
+  border: 1px solid #04212c;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.55) 0, rgba(255,255,255,.12) 48%, rgba(255,255,255,0) 50%),
+    radial-gradient(ellipse 80% 60% at 50% 110%, rgba(160,240,255,.9), transparent 70%),
+    linear-gradient(180deg, #49c8ef, #1683ad 55%, #0d5f7c);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), 0 0 10px -2px rgba(111,224,255,.6);
+  transition: box-shadow .25s ease, filter .25s ease;
+}
+.signoff-power:hover .power-btn, .signoff-power:focus-visible .power-btn{
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.4), 0 0 18px 2px rgba(111,224,255,.7);
+  filter: brightness(1.08);
+}
+.power-btn svg{ filter: drop-shadow(0 1px 1px rgba(0,0,0,.5)); }
+.signoff-power:hover .power-btn svg{ animation: restartSpin .6s ease; }
+@keyframes restartSpin{ to{ transform: rotate(360deg); } }
+/* Restart: the page collapses like a CRT switching off */
+html.is-shutting-down #siteRoot{ animation: crtPowerOff .45s cubic-bezier(.4,0,.7,1) both; }
+html.is-shutting-down body{ background: #050505; }
+
+@media (max-width: 640px){
+  .signoff-body{ grid-template-columns: 1fr; text-align: center; padding: 28px 20px 0; justify-items: center; }
+  .signoff-icon{ grid-row: auto; width: 84px; height: 84px; border-radius: 18px; margin-bottom: 8px; }
+  .signoff-actions{ margin: 22px -20px 0; padding: 14px 20px; justify-content: center; }
+  .signoff-power{ margin-left: 0; }
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
 footer{
-  padding: 30px 0 46px;
-  text-align:center;
+  padding: 10px 0 40px;
   color: var(--paper-faint);
   font-size:.82rem;
 }
-footer .foot-mark{
-  font-family: var(--font-mono); letter-spacing:.04em; font-size:.74rem;
-  color: var(--text-cyan); margin-bottom: 10px;
-  transition: color .35s ease;
-}
-.foot-links{
-  display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
-  gap: 4px; margin: 14px 0 4px;
-  font-family: var(--font-display); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
-}
-.foot-links a{ color: var(--paper-dim); padding: 4px 8px; transition: color .2s ease; }
-.foot-links a:hover{ color: var(--text-cyan); }
-.foot-links .sep{ color: var(--line-strong); }
-.footer-badges{
-  display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
-  gap: 14px; margin-top: 16px;
-}
-.hit-counter{
-  display:inline-flex; align-items:center; gap:8px;
-  padding: 6px 12px;
-  background: linear-gradient(180deg, #141414, #0a0a0a);
-  border: 1px solid var(--line-strong);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,.6), 0 1px 0 rgba(255,255,255,.08);
-}
-.hit-counter .hc-label{
-  font-family: var(--font-display); font-size:.6rem; letter-spacing:.1em;
-  color: #9aa39a; text-transform:uppercase;
-}
-.hit-counter .hc-digits{
-  font-family: var(--font-mono); font-size:.85rem; font-weight:700; letter-spacing:.15em;
-  color: var(--mint);
-  text-shadow: 0 0 6px rgba(124,252,154,.7);
-}
-.legacy-badge{
-  display:inline-flex; align-items:center;
-  font-family: var(--font-mono); font-size:.62rem; letter-spacing:.06em;
-  color: var(--paper);
-  padding: 8px 14px;
-  background: var(--legacy-badge-bg);
-  border: 1px solid var(--line-strong);
-  transition: color .35s ease;
-}
 
-/* System diagnostic readout — a fake BIOS/system-info panel, live values
-   pulled from navigator/screen at load. Always dark/terminal like the
-   boot screen, regardless of site theme. */
-.sysdiag-frame{
-  max-width: 420px; margin: 0 auto 22px; text-align:left;
+/* A glass status bar, like the strip along the bottom of a Vista window */
+.foot-bar{
+  --chip-hi: #3c3c3c; --chip-lo: #1c1c1c;
+  --chip-gloss: rgba(255,255,255,.1);
+  --chip-outline: #050505;
+  --chip-ring: rgba(255,255,255,.1);
+  display:flex; flex-wrap: wrap; align-items:center; justify-content: space-between; gap: 10px 18px;
+  padding: 9px 12px 9px 16px;
+  border: 1px solid var(--chip-outline); border-radius: 6px;
+  background:
+    linear-gradient(180deg, var(--chip-gloss) 0, rgba(255,255,255,.02) 49%, rgba(255,255,255,0) 50%),
+    linear-gradient(180deg, var(--chip-hi), var(--chip-lo));
+  box-shadow: inset 0 0 0 1px var(--chip-ring), 0 2px 8px var(--btn-shadow-ambient);
+  color: var(--paper-dim);
 }
-.sysdiag-body{ padding: 16px 20px; background: #0a0a0a; }
-.sysdiag-grid{
-  display:grid; grid-template-columns: auto 1fr; gap: 7px 16px;
-  font-family: var(--font-mono); font-size:.74rem;
+:root[data-theme="light"] .foot-bar{
+  --chip-hi: #ffffff; --chip-lo: #dcdcdc;
+  --chip-gloss: rgba(255,255,255,.8);
+  --chip-outline: #a3a3a3;
+  --chip-ring: rgba(255,255,255,.9);
 }
-.sysdiag-grid dt{ margin:0; color: #7a8a7a; letter-spacing:.04em; }
-.sysdiag-grid dd{ margin:0; color: var(--mint, #7cfc9a); text-align:right; text-shadow: 0 0 5px rgba(124,252,154,.4); }
+.foot-bar p{ margin: 0; }
+.foot-bar .foot-mark{ margin: 0; font-family: var(--font-mono); font-size: .74rem; color: var(--text-cyan); }
+.foot-links{
+  display:flex; flex-wrap:wrap; align-items:center; gap: 2px;
+  font-family: var(--font-display); font-size:.74rem; font-weight: 600; letter-spacing:.06em; text-transform:uppercase;
+}
+.foot-links a{ color: var(--paper-dim); padding: 3px 8px; border-radius: 3px; transition: color .2s ease, background .2s ease; }
+.foot-links a:hover{ color: var(--text-cyan); background: var(--cyan-tint); }
+.foot-links .sep{ color: var(--line-strong); }
+@media (max-width: 700px){
+  .foot-bar{ justify-content: center; text-align: center; }
+}
 
 /* ============================================================
    PAGE HEADER — shared eyebrow+title block for interior pages
