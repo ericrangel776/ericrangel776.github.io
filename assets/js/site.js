@@ -1,6 +1,8 @@
 (function(){
   "use strict";
 
+  document.documentElement.classList.add('js');
+
   // Footer year
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -280,10 +282,18 @@
 
   // ---------- Scroll-reveal (loading bar + fade) ----------
   var revealTargets = document.querySelectorAll('.reveal, .reveal-item');
+  // Give each skill tag its position so they pop in one after another.
+  document.querySelectorAll('.skill-card .tag-row').forEach(function(row){
+    Array.prototype.forEach.call(row.children, function(tag, i){ tag.style.setProperty('--i', i); });
+  });
   if ('IntersectionObserver' in window) {
+    // Items that come into view in the same moment (a row of cards,
+    // a grid of skills) open one after another instead of all at once.
     var io = new IntersectionObserver(function(entries){
+      var n = 0;
       entries.forEach(function(entry){
         if (entry.isIntersecting) {
+          entry.target.style.setProperty('--reveal-delay', (n++ * 0.09) + 's');
           entry.target.classList.add('is-visible');
           io.unobserve(entry.target);
         }
@@ -422,6 +432,23 @@
     };
     // The first run is already in the markup; hold it, then start cycling.
     wait(4200).then(cycle);
+  }
+
+  // ---------- Hero glare: a reflection on the window glass that follows the pointer ----------
+  var heroFrame = document.querySelector('.hero-frame');
+  if (heroFrame && window.matchMedia('(hover: hover)').matches) {
+    var glareQueued = false, gx = 0, gy = 0;
+    heroFrame.addEventListener('pointermove', function(e){
+      var r = heroFrame.getBoundingClientRect();
+      gx = e.clientX - r.left; gy = e.clientY - r.top;
+      if (glareQueued) return;
+      glareQueued = true;
+      requestAnimationFrame(function(){
+        heroFrame.style.setProperty('--gx', gx + 'px');
+        heroFrame.style.setProperty('--gy', gy + 'px');
+        glareQueued = false;
+      });
+    });
   }
 
 })();
