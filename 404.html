@@ -24,7 +24,7 @@
 <link rel="manifest" href="assets/icons/site.webmanifest">
 <meta name="theme-color" content="#121212">
 
-<title>404 | Signal Lost</title>
+<title>404 | Page Not Found</title>
 <meta name="description" content="Page not found.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,7 +43,7 @@
 .err-frame .frame-body{ padding: 40px 36px; text-align:center; }
 .err-code{
   font-family: var(--font-mono); color: var(--rose-deep);
-  font-size:.85rem; letter-spacing:.1em; margin-bottom: 14px;
+  font-size:.85rem; letter-spacing:.02em; margin-bottom: 14px; overflow-wrap:anywhere;
   text-shadow: 0 0 6px rgba(255,111,145,.4);
 }
 .err-frame h1{
@@ -70,17 +70,26 @@
   <div class="frame err-frame">
     <div class="panel-bar v-rose"><span>SYSTEM_ERROR.LOG</span><span class="led" aria-hidden="true"></span></div>
     <div class="frame-body">
-      <div class="err-code">0x00000404 // SIGNAL LOST</div>
+      <div class="err-code" id="errCode">cd: no such file or directory</div>
       <h1>PAGE NOT FOUND</h1>
-      <p>The page you're looking for was moved, renamed, or never existed on this system. Let's get you back to a known-good state.</p>
+      <p>That page was moved, renamed, or never existed. Here are a couple of places that do.</p>
       <div class="err-actions">
         <a class="btn btn-chrome" href="index.html#top">Return Home ▸</a>
         <a class="btn btn-ghost" href="devlog.html">Read the Devlog</a>
       </div>
-      <div class="err-static">TRACE: REQUESTED_RESOURCE_UNAVAILABLE · RETRY: N/A · STATUS: TERMINATED</div>
+      <div class="err-static" id="errTrace">HTTP 404 Not Found</div>
     </div>
   </div>
 </div>
 
+<script>
+(function(){
+  var path = location.pathname;
+  try { path = decodeURIComponent(path); } catch (e) {}
+  if (path.length > 60) path = path.slice(0, 57) + '...';
+  document.getElementById('errCode').textContent = 'cd: no such file or directory: ' + path;
+  document.getElementById('errTrace').textContent = 'GET ' + path + ' → 404 Not Found';
+})();
+</script>
 </body>
 </html>

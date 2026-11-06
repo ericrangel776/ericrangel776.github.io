@@ -81,7 +81,7 @@
   <div class="navbar-inner">
     <a class="brand" href="index.html#top" aria-label="Eric Rangel, home">
       <span class="brand-mark" aria-hidden="true">ER</span>
-      ERIC&nbsp;RANGEL
+      <span class="brand-text"><span class="brand-name">ERIC&nbsp;RANGEL</span><span class="brand-sub" aria-hidden="true">AI Implementation</span></span>
     </a>
     <div class="nav-right">
       <button id="themeToggle" class="theme-toggle" type="button" data-state="light" aria-pressed="true" aria-label="Switch to dark theme">
@@ -139,7 +139,7 @@
   <section class="page-hero">
     <div class="wrap">
       <a class="back-link" href="index.html#projects">← Back to Work</a>
-      <div class="section-tag">PROJECT_04.DB // Desktop / Database</div>
+      <div class="section-tag"><span class="path-root">~/</span>projects/driving-school</div>
       <h1>ABC Driving School Manager</h1>
       <p class="lead">A WinForms desktop app for managing clients, staff, and class rosters, built for office staff who needed something faster than spreadsheets, not a web app they didn't ask for.</p>
       <div class="case-meta">
@@ -206,7 +206,7 @@ scheduleGrid.DataSource = ToDataTable(reader);</div>
 
 <footer>
   <div class="wrap">
-    <div class="foot-mark">// END TRANSMISSION</div>
+    <div class="foot-mark" id="lastUpdated" hidden>last updated <time></time></div>
     <p>&copy; <span id="year"></span> Eric Rangel. Built with HTML, CSS &amp; vanilla JavaScript.</p>
     <div class="foot-links">
       <a href="index.html#top">Home</a><span class="sep">/</span>

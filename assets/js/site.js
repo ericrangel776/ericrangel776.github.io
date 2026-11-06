@@ -5,6 +5,23 @@
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  // Footer "last updated": the page's Last-Modified date from the server
+  // (on GitHub Pages, the deploy time). Browsers report "now" when the
+  // server sends no date, so in that case the line stays hidden.
+  var updatedEl = document.getElementById('lastUpdated');
+  if (updatedEl) {
+    var modified = new Date(document.lastModified);
+    if (!isNaN(modified) && Date.now() - modified.getTime() > 60 * 1000) {
+      var iso = modified.getFullYear() + '-' +
+        String(modified.getMonth() + 1).padStart(2, '0') + '-' +
+        String(modified.getDate()).padStart(2, '0');
+      var timeEl = updatedEl.querySelector('time');
+      timeEl.textContent = iso;
+      timeEl.setAttribute('datetime', iso);
+      updatedEl.hidden = false;
+    }
+  }
+
   // ---------- Retro hit counter (real, shared count via a free public counter API) ----------
   var hitCounterEl = document.getElementById('hitCounter');
   if (hitCounterEl) {
@@ -353,6 +370,58 @@
           if (submitBtn) submitBtn.disabled = false;
         });
     });
+  }
+
+  // ---------- Hero terminal: real commands from real projects ----------
+  // Types a command, prints its result, holds, then moves to the next
+  // project. Every command and number here comes from the project itself
+  // (package.json scripts, script filenames, results on the project cards).
+  var term = document.getElementById('heroTerm');
+  if (term && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var runs = [
+      { cmd: 'npm test && npm run test:browser', out: '✓ ~150 tests passed · study-pet' },
+      { cmd: 'python watch_ppo.py',              out: '✓ PPO agent · peak 46 pellets / episode' },
+      { cmd: 'dotnet run --project ExpenseTracker', out: '✓ ASP.NET Core 8 · EF Core · SQL Server' }
+    ];
+    var cmdEl = term.querySelector('.t-cmd');
+    var outEl = term.querySelector('.t-out');
+    var i = 0;
+
+    var wait = function(ms){ return new Promise(function(r){ setTimeout(r, ms); }); };
+    var typeOut = function(text){
+      var n = 0;
+      return new Promise(function(done){
+        (function step(){
+          cmdEl.textContent = text.slice(0, ++n);
+          if (n < text.length) setTimeout(step, 38 + Math.random() * 45);
+          else done();
+        })();
+      });
+    };
+    var erase = function(){
+      return new Promise(function(done){
+        (function step(){
+          var t = cmdEl.textContent;
+          if (!t.length) return done();
+          cmdEl.textContent = t.slice(0, -3);
+          setTimeout(step, 18);
+        })();
+      });
+    };
+
+    var cycle = function(){
+      i = (i + 1) % runs.length;
+      term.classList.add('is-typing');
+      return wait(250)
+        .then(erase)
+        .then(function(){ outEl.textContent = runs[i].out; return wait(350); })
+        .then(function(){ return typeOut(runs[i].cmd); })
+        .then(function(){ return wait(420); })
+        .then(function(){ term.classList.remove('is-typing'); return wait(4200); })
+        .then(cycle);
+    };
+    // The first run is already in the markup; hold it, then start cycling.
+    wait(4200).then(cycle);
   }
 
 })();
