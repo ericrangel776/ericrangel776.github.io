@@ -439,6 +439,7 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
    Its top edge picks up the window's accent like a lit seam. */
 .frame > :not(.panel-bar){
   flex: 1 1 auto; /* fill the window when a grid stretches it */
+  margin: 0;      /* <dl>/<form> bodies carry browser margins that show as extra glass */
   background: var(--bg-panel);
   border: 1px solid var(--glass-outline);
   border-top-color: var(--accent);
