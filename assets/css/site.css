@@ -1994,7 +1994,20 @@ footer{
    cores / little memory), or by the footer switch. Keeps the look but
    stops everything that animates continuously.
    ============================================================ */
-html.perf-lite .aurora > *{ animation: none !important; }
+html.perf-lite .aurora .band{ animation: none !important; }
+/* The light arcs still drift and brighten gently in Lite, using only
+   translate and opacity (the cheapest things to animate) */
+html.perf-lite .aurora .t1{ animation: liteDrift1 20s ease-in-out infinite alternate !important; }
+html.perf-lite .aurora .t2{ animation: liteDrift2 26s ease-in-out infinite alternate !important; }
+html.perf-lite .is-offscreen .aurora .trail{ animation-play-state: paused !important; }
+@keyframes liteDrift1{
+  from{ transform: translate3d(-3%, 0, 0);   opacity: .65; }
+  to  { transform: translate3d(3%, -7%, 0);  opacity: 1; }
+}
+@keyframes liteDrift2{
+  from{ transform: translate3d(3%, -4%, 0);  opacity: 1; }
+  to  { transform: translate3d(-3%, 5%, 0);  opacity: .6; }
+}
 html.perf-lite .hero .hero-frame .frame-body > h1{
   animation: riseIn .6s cubic-bezier(.2,.8,.2,1) both;
   animation-delay: calc(var(--intro) + .38s);
