@@ -355,13 +355,9 @@ body.konami-active{ animation: konamiHue 1.8s linear; }
 }
 .bg-fx .brushed{
   position:absolute; inset:0;
-  background-color: var(--bgfx-brush);
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3'%3E%3Crect width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3'%3E%3Crect width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
-  -webkit-mask-repeat: repeat;
-  mask-repeat: repeat;
-  -webkit-mask-size: 1px 3px;
-  mask-size: 1px 3px;
+  /* A plain repeating gradient, not a tiny tiled mask (those are very
+     slow to draw in Firefox) */
+  background: repeating-linear-gradient(to bottom, var(--bgfx-brush) 0 1px, transparent 1px 3px);
 }
 .bg-fx .wash{
   position:absolute; inset:0;
@@ -1247,7 +1243,6 @@ html:not([data-boot="seen"]) .hero{ --intro: .8s; }
 }
 .aurora .band{
   position:absolute; left:-10%; width:120%; height: 55%;
-  will-change: transform;
 }
 .aurora .b1{ top: 6%;
   background:
@@ -1269,7 +1264,6 @@ html:not([data-boot="seen"]) .hero{ --intro: .8s; }
   position:absolute; left:-25%; width:150%; height: 320px;
   border-radius: 50%;
   border-top: 2px solid rgba(160,235,255,.6);
-  will-change: transform;
 }
 .aurora .t1{ top: 30%; animation: drift1 19s ease-in-out infinite alternate-reverse; }
 .aurora .t2{ top: 46%; border-top-color: rgba(255,214,150,.42);
@@ -1993,3 +1987,37 @@ footer{
 .devlog-entry h2{ font-size: 1.1rem; margin-bottom: 10px; }
 .devlog-entry p{ color: var(--paper-dim); font-size:.95rem; }
 .devlog-entry .tag-row{ margin-top: 14px; }
+
+/* ============================================================
+   LITE MODE — "Adjust for best performance". Set automatically when
+   the site measures a low frame rate (or the machine reports very few
+   cores / little memory), or by the footer switch. Keeps the look but
+   stops everything that animates continuously.
+   ============================================================ */
+html.perf-lite .aurora > *{ animation: none !important; }
+html.perf-lite .aurora .trail{ display: none; }
+html.perf-lite .hero .hero-frame .frame-body > h1{
+  animation: riseIn .6s cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: calc(var(--intro) + .38s);
+}
+html.perf-lite .eyebrow .dot,
+html.perf-lite .brand-sub::before,
+html.perf-lite .tb-dot{ animation: none; }
+html.perf-lite .btn-chrome:hover{ animation: none; }
+html.perf-lite .bg-fx .brushed{ display: none; }
+html.perf-lite .glare{ display: none; }
+html.perf-lite .reveal-item.is-visible{ animation-name: fadeOnly; }
+@keyframes fadeOnly{ from{ opacity:0; } to{ opacity:1; } }
+
+/* Footer switch: "Visual effects: Full / Lite" */
+.perf-toggle{
+  display:inline-flex; align-items:center; gap: 6px;
+  padding: 3px 9px;
+  font: 600 .72rem var(--font-body); letter-spacing: .02em;
+  color: var(--paper-dim);
+  background: none; border: 1px solid transparent; border-radius: 3px;
+  cursor: pointer;
+  transition: color .2s ease, background .2s ease, border-color .2s ease;
+}
+.perf-toggle:hover{ color: var(--text-cyan); background: var(--cyan-tint); }
+.perf-toggle b{ font-weight: 700; color: var(--text-cyan); }

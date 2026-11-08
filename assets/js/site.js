@@ -3,6 +3,27 @@
 
   document.documentElement.classList.add('js');
 
+  // ---------- Performance: "Visual effects" Full / Lite ----------
+  // Lite keeps the look but stops everything that animates continuously.
+  // Chosen by the footer switch (remembered), or automatically when the
+  // machine reports very few cores / little memory, or when a short
+  // frame-rate check after load finds the page struggling.
+  var perfRoot = document.documentElement;
+  var perfPref = null;
+  try { perfPref = localStorage.getItem('perfMode'); } catch (e) {}
+  var lowSpec = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) ||
+                (navigator.deviceMemory && navigator.deviceMemory <= 2);
+  var setLite = function(on, remember){
+    perfRoot.classList.toggle('perf-lite', on);
+    if (remember) { try { localStorage.setItem('perfMode', on ? 'lite' : 'full'); } catch (e) {} }
+    var t = document.getElementById('perfToggle');
+    if (t) {
+      t.setAttribute('aria-pressed', on ? 'true' : 'false');
+      t.querySelector('b').textContent = on ? 'Lite' : 'Full';
+    }
+  };
+  setLite(perfPref === 'lite' || (!perfPref && lowSpec), false);
+
   // Footer year
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -364,6 +385,7 @@
 
       var apply = function(){
         queued = false;
+        if (perfRoot.classList.contains('perf-lite')) return;
         if (!heroRect) measure();
         px = ((mx - heroRect.left) / heroRect.width) * 2 - 1;
         py = ((my - heroRect.top) / heroRect.height) * 2 - 1;
@@ -468,6 +490,36 @@
         }
         root.classList.remove('is-shutting-down');
       }, 520);
+    });
+  }
+
+  // ---------- Performance: footer switch + automatic frame-rate check ----------
+  var perfToggle = document.getElementById('perfToggle');
+  if (perfToggle) {
+    setLite(perfRoot.classList.contains('perf-lite'), false);
+    perfToggle.addEventListener('click', function(){
+      setLite(!perfRoot.classList.contains('perf-lite'), true);
+    });
+  }
+  // Only when nobody has chosen yet: a few seconds after load (once the
+  // intro has played), time ~90 frames. If the median frame takes longer
+  // than ~22ms (under ~45fps), switch to Lite and remember it.
+  if (!perfPref && !perfRoot.classList.contains('perf-lite') &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.addEventListener('load', function(){
+      setTimeout(function(){
+        if (document.visibilityState !== 'visible') return;
+        var times = [], last = 0;
+        (function frame(now){
+          if (last) times.push(now - last);
+          last = now;
+          if (times.length < 90 && document.visibilityState === 'visible') { requestAnimationFrame(frame); return; }
+          if (times.length < 60) return;
+          times.sort(function(a, b){ return a - b; });
+          var median = times[Math.floor(times.length / 2)];
+          if (median > 22) setLite(true, true);
+        })(0);
+      }, 3000);
     });
   }
 
