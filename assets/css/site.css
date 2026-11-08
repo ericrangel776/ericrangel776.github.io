@@ -1994,19 +1994,26 @@ footer{
    cores / little memory), or by the footer switch. Keeps the look but
    stops everything that animates continuously.
    ============================================================ */
-html.perf-lite .aurora .band{ animation: none !important; }
-/* The light arcs still drift and brighten gently in Lite, using only
-   translate and opacity (the cheapest things to animate) */
-html.perf-lite .aurora .t1{ animation: liteDrift1 20s ease-in-out infinite alternate !important; }
-html.perf-lite .aurora .t2{ animation: liteDrift2 26s ease-in-out infinite alternate !important; }
-html.perf-lite .is-offscreen .aurora .trail{ animation-play-state: paused !important; }
+/* In Lite the aurora keeps the same paths, speeds and rotation as Full,
+   minus the vertical stretch (scaling can make some browsers redraw the
+   layers); slide, rotate and fade are the cheapest things to animate. */
+html.perf-lite .aurora .b1{ animation: liteDrift1 22s ease-in-out infinite alternate !important; }
+html.perf-lite .aurora .b2{ animation: liteDrift2 27s ease-in-out infinite alternate !important; }
+html.perf-lite .aurora .b3{ animation: liteDrift3 31s ease-in-out infinite alternate !important; }
+html.perf-lite .aurora .t1{ animation: liteDrift1 19s ease-in-out infinite alternate-reverse !important; }
+html.perf-lite .aurora .t2{ animation: liteDrift2 24s ease-in-out infinite alternate-reverse !important; }
+html.perf-lite .is-offscreen .aurora > *{ animation-play-state: paused !important; }
 @keyframes liteDrift1{
-  from{ transform: translate3d(-3%, 0, 0);   opacity: .65; }
-  to  { transform: translate3d(3%, -7%, 0);  opacity: 1; }
+  from{ transform: translate(-6%, 0)   rotate(-9deg); }
+  to  { transform: translate(6%, -14%) rotate(-3deg); }
 }
 @keyframes liteDrift2{
-  from{ transform: translate3d(3%, -4%, 0);  opacity: 1; }
-  to  { transform: translate3d(-3%, 5%, 0);  opacity: .6; }
+  from{ transform: translate(5%, 6%)   rotate(7deg); }
+  to  { transform: translate(-7%, -8%) rotate(-4deg); }
+}
+@keyframes liteDrift3{
+  from{ transform: translate(-4%, 8%)  rotate(-5deg); }
+  to  { transform: translate(8%, -6%)  rotate(6deg); }
 }
 html.perf-lite .hero .hero-frame .frame-body > h1{
   animation: riseIn .6s cubic-bezier(.2,.8,.2,1) both;
