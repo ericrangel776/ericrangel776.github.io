@@ -1989,19 +1989,18 @@ footer{
 .devlog-entry .tag-row{ margin-top: 14px; }
 
 /* ============================================================
-   LITE MODE — "Adjust for best performance". Set automatically when
-   the site measures a low frame rate (or the machine reports very few
-   cores / little memory), or by the footer switch. Keeps the look but
-   stops everything that animates continuously.
+   LITE MODE — "Adjust for best performance". Switched on automatically
+   only when the site measures that this machine and browser can't keep
+   up (rechecked every visit), or by the footer switch (remembered).
+   Keeps the look but drops the costliest continuous effects.
    ============================================================ */
-/* In Lite the aurora keeps the same paths, speeds and rotation as Full,
-   minus the vertical stretch (scaling can make some browsers redraw the
-   layers); slide, rotate and fade are the cheapest things to animate. */
+/* In Lite the glow bands keep the same paths, speeds and rotation as
+   Full, minus the vertical stretch (scaling can make some browsers redraw
+   the layers); the thin light arcs are hidden. */
 html.perf-lite .aurora .b1{ animation: liteDrift1 22s ease-in-out infinite alternate !important; }
 html.perf-lite .aurora .b2{ animation: liteDrift2 27s ease-in-out infinite alternate !important; }
 html.perf-lite .aurora .b3{ animation: liteDrift3 31s ease-in-out infinite alternate !important; }
-html.perf-lite .aurora .t1{ animation: liteDrift1 19s ease-in-out infinite alternate-reverse !important; }
-html.perf-lite .aurora .t2{ animation: liteDrift2 24s ease-in-out infinite alternate-reverse !important; }
+html.perf-lite .aurora .trail{ display: none; }
 html.perf-lite .is-offscreen .aurora > *{ animation-play-state: paused !important; }
 @keyframes liteDrift1{
   from{ transform: translate(-6%, 0)   rotate(-9deg); }

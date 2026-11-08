@@ -3,26 +3,31 @@
 
   document.documentElement.classList.add('js');
 
-  // ---------- Performance: "Visual effects" Full / Lite ----------
-  // Lite keeps the look but stops everything that animates continuously.
-  // Chosen by the footer switch (remembered), or automatically when the
-  // machine reports very few cores / little memory, or when a short
-  // frame-rate check after load finds the page struggling.
+  // ---------- Performance: Full / Lite ----------
+  // Full effects by default. Lite switches on in two ways:
+  //  - the footer "Visual effects" switch: the visitor's choice, remembered
+  //    and always respected (the automatic check then stays out of the way);
+  //  - otherwise, a frame-rate check (bottom of this file) that finds this
+  //    machine and browser can't keep up. That result only lasts for the
+  //    current visit, so every visit gets a fresh check.
   var perfRoot = document.documentElement;
   var perfPref = null;
   try { perfPref = localStorage.getItem('perfMode'); } catch (e) {}
-  var lowSpec = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) ||
-                (navigator.deviceMemory && navigator.deviceMemory <= 2);
-  var setLite = function(on, remember){
+  var setLite = function(on, chosen){
     perfRoot.classList.toggle('perf-lite', on);
-    if (remember) { try { localStorage.setItem('perfMode', on ? 'lite' : 'full'); } catch (e) {} }
+    try {
+      if (chosen) localStorage.setItem('perfMode', on ? 'lite' : 'full');
+      else if (on) sessionStorage.setItem('perfLite', '1');
+    } catch (e) {}
     var t = document.getElementById('perfToggle');
     if (t) {
       t.setAttribute('aria-pressed', on ? 'true' : 'false');
       t.querySelector('b').textContent = on ? 'Lite' : 'Full';
     }
   };
-  setLite(perfPref === 'lite' || (!perfPref && lowSpec), false);
+  var perfAutoLite = false;
+  try { perfAutoLite = sessionStorage.getItem('perfLite') === '1'; } catch (e) {}
+  if (perfPref === 'lite' || (!perfPref && perfAutoLite)) perfRoot.classList.add('perf-lite');
 
   // Footer year
   var yearEl = document.getElementById('year');
@@ -493,17 +498,20 @@
     });
   }
 
-  // ---------- Performance: footer switch + automatic frame-rate check ----------
+  // ---------- Performance: footer switch ----------
   var perfToggle = document.getElementById('perfToggle');
   if (perfToggle) {
     setLite(perfRoot.classList.contains('perf-lite'), false);
     perfToggle.addEventListener('click', function(){
+      perfPref = 'chosen';
       setLite(!perfRoot.classList.contains('perf-lite'), true);
     });
   }
-  // Only when nobody has chosen yet: a few seconds after load (once the
-  // intro has played), time ~90 frames. If the median frame takes longer
-  // than ~22ms (under ~45fps), switch to Lite and remember it.
+
+  // ---------- Performance: frame-rate check ----------
+  // A few seconds after load (once the intro has played), time ~2 seconds
+  // of frames while the page is visible. Only a sustained slowdown (median
+  // frame over 25ms, i.e. under ~40fps) switches this visit to Lite.
   if (!perfPref && !perfRoot.classList.contains('perf-lite') &&
       !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     window.addEventListener('load', function(){
@@ -513,11 +521,11 @@
         (function frame(now){
           if (last) times.push(now - last);
           last = now;
-          if (times.length < 90 && document.visibilityState === 'visible') { requestAnimationFrame(frame); return; }
-          if (times.length < 60) return;
+          if (times.length < 120 && document.visibilityState === 'visible') { requestAnimationFrame(frame); return; }
+          if (times.length < 90) return;
           times.sort(function(a, b){ return a - b; });
-          var median = times[Math.floor(times.length / 2)];
-          if (median > 22) setLite(true, true);
+          // A choice made with the switch meanwhile always wins
+          if (!perfPref && times[Math.floor(times.length / 2)] > 25) setLite(true, false);
         })(0);
       }, 3000);
     });
