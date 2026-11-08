@@ -1995,7 +1995,6 @@ footer{
    stops everything that animates continuously.
    ============================================================ */
 html.perf-lite .aurora > *{ animation: none !important; }
-html.perf-lite .aurora .trail{ display: none; }
 html.perf-lite .hero .hero-frame .frame-body > h1{
   animation: riseIn .6s cubic-bezier(.2,.8,.2,1) both;
   animation-delay: calc(var(--intro) + .38s);
